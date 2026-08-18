@@ -36,7 +36,7 @@ Edit this repository (`climbwithascend`) when you change the hosted site.
 
 - [Privacy](app/privacy.html)
 - [Terms](app/terms.html)
-- [Forever Free Pledge](app/pledge.html) — core practice, unofficial full-length, and parent view stay free. No student paywall.
+- [Students never pay](app/pledge.html) — students never pay for practice. Schools or donors may fund it later. No student paywall.
 
 SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this product/site.
 
