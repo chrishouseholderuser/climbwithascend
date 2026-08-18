@@ -1,0 +1,1846 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Ascend. Practice for the Digital SAT® exam, one climb at a time.</title>
+<meta name="description" content="Free unofficial practice for the Digital SAT® exam. Climb 15 minutes a day. Complements a Bluebook™ practice test. No ads." />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0B1026" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Ascend" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+<style>
+  :root{
+    --bg:#0B1026; --bg2:#0E1430; --surface:#151B3B; --surface2:#1B2247;
+    --line:#26305c; --text:#E8ECFF; --muted:#8A93C2; --faint:#5b6499;
+    --sun1:#FFC46B; --sun2:#FF8A5B; --sun3:#FF6BA0;
+    --accent:#7C5CFF; --accent2:#5CC8FF;
+    --good:#35D0A5; --bad:#FF6B6B; --gold:#FFD36B;
+    --r:20px; --r-sm:13px;
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--font); color:var(--text);
+    background:
+      radial-gradient(120% 90% at 50% -10%, #1a2352 0%, var(--bg) 55%, #070a1c 100%);
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  #app{
+    max-width:480px; margin:0 auto; height:100dvh; height:100vh;
+    display:flex; flex-direction:column; position:relative;
+    background:linear-gradient(180deg,#0c1230,#0a0f26); overflow:hidden;
+    box-shadow:0 0 80px rgba(0,0,0,.6);
+  }
+  .screen{flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch}
+  .screen::-webkit-scrollbar{width:0}
+  .pad{padding:18px 18px 26px}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .row{display:flex;align-items:center;gap:10px}
+  .between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .grow{flex:1}
+  .center{text-align:center}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .muted{color:var(--muted)}
+  .tiny{font-size:12px}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:700}
+
+  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;text-wrap:balance;line-height:1.15}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  h3{font-size:15px;font-weight:700}
+  p{line-height:1.5;color:#cfd6ff}
+
+  /* Topbar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:14px 16px 10px; }
+  .brand{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:-.01em}
+  .brand .logo{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;
+    background:linear-gradient(160deg,var(--sun1),var(--sun3));font-size:15px}
+  .chips{display:flex;gap:8px}
+  .chip{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:13px}
+  .chip .mono{font-size:13px}
+  .chip.flame{color:var(--sun1)}
+  .chip.xp{color:var(--accent2)}
+
+  /* Cards */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+  .card.soft{background:linear-gradient(180deg,var(--surface),#12183a)}
+  .card.hero{background:none;border:none;padding:0;overflow:hidden;border-radius:var(--r)}
+
+  /* Buttons */
+  .btn{appearance:none;border:none;cursor:pointer;font-family:inherit;font-weight:800;
+    color:#160c02;background:linear-gradient(180deg,var(--sun1),var(--sun2));
+    padding:15px 18px;border-radius:15px;font-size:16px;width:100%;
+    box-shadow:0 8px 20px -8px rgba(255,138,91,.7); transition:transform .08s ease, filter .15s}
+  .btn:active{transform:translateY(1px) scale(.995)}
+  .btn:hover{filter:brightness(1.04)}
+  .btn.ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line);box-shadow:none}
+  .btn.small{width:auto;padding:10px 14px;font-size:14px;border-radius:12px}
+  .btn.accent{background:linear-gradient(180deg,var(--accent),#6246e0);color:#fff;box-shadow:0 8px 20px -8px rgba(124,92,255,.7)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn:focus-visible,.opt:focus-visible,input:focus-visible,.tab:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+
+  .link{color:var(--accent2);cursor:pointer;font-weight:700}
+
+  /* Inputs */
+  .field{display:flex;flex-direction:column;gap:7px}
+  .field label{font-size:13px;font-weight:700;color:var(--muted)}
+  input[type=text],input[type=number],input[type=date],input[type=password],input[type=email],input[type=tel],.input{
+    font-family:inherit;font-size:16px;color:var(--text);background:var(--bg2);
+    border:1px solid var(--line);border-radius:13px;padding:13px 14px;width:100%}
+  input::placeholder{color:var(--faint)}
+  input:-webkit-autofill,input:-webkit-autofill:focus{-webkit-text-fill-color:var(--text);caret-color:var(--text);-webkit-box-shadow:0 0 0 1000px var(--bg2) inset;transition:background-color 9999s ease-in-out 0s}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg .opt-pill{flex:1;min-width:64px;text-align:center;padding:12px 6px;border-radius:13px;
+    background:var(--bg2);border:1px solid var(--line);cursor:pointer;font-weight:700}
+  .seg .opt-pill.sel{background:linear-gradient(180deg,var(--accent),#6246e0);border-color:transparent;color:#fff}
+
+  /* Progress bars */
+  .bar{height:9px;border-radius:99px;background:#0b1030;border:1px solid var(--line);overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sun1),var(--sun3));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+  .bar.xp > i{background:linear-gradient(90deg,var(--accent2),var(--accent))}
+  .bar.good > i{background:linear-gradient(90deg,#2ee6a6,#12b88a)}
+
+  /* Mountain */
+  .mtn-wrap{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+  .mtn-wrap svg{display:block;width:100%;height:auto}
+  .mtn-cap{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;
+    background:linear-gradient(180deg,rgba(6,9,24,0),rgba(6,9,24,.82));display:flex;justify-content:space-between;align-items:flex-end}
+  .goal-badge{position:absolute;top:12px;right:12px;background:rgba(9,12,30,.6);border:1px solid var(--line);
+    border-radius:12px;padding:7px 11px;text-align:right;backdrop-filter:blur(4px)}
+
+  /* Skill list */
+  .skill{display:flex;align-items:center;gap:12px;padding:13px;border-radius:15px;background:var(--surface);
+    border:1px solid var(--line);cursor:pointer;transition:transform .08s, border-color .15s}
+  .skill:hover{border-color:var(--accent)}
+  .skill:active{transform:scale(.99)}
+  .skill .ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;
+    background:var(--surface2);flex-shrink:0}
+  .skill.locked{opacity:.55}
+  .ring{--p:0;width:40px;height:40px;border-radius:50%;flex-shrink:0;
+    background:conic-gradient(var(--good) calc(var(--p)*1%), #232c55 0);display:grid;place-items:center}
+  .ring::after{content:attr(data-v);width:30px;height:30px;border-radius:50%;background:var(--surface);
+    display:grid;place-items:center;font-size:10px;font-weight:800;font-family:var(--mono);color:var(--good)}
+  .dom-label{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--sun1);margin:6px 2px}
+  .learn-hero{border-radius:20px;padding:16px 18px;background:var(--surface);border:1px solid var(--line)}
+  .sec-band{display:flex;align-items:center;gap:11px;margin:18px 2px 2px}
+  .sec-band .sico{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px}
+  .sec-band b{font-size:16px}
+  .mod{display:flex;align-items:center;gap:13px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);cursor:pointer;transition:transform .09s,border-color .15s,box-shadow .15s}
+  .mod:hover{border-color:var(--accent);box-shadow:0 8px 22px rgba(0,0,0,.28);transform:translateY(-1px)}
+  .mod:active{transform:scale(.995)}
+  .mod .mico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+  .mod .mmeta{flex:1;min-width:0}
+  .mod .mmeta b{font-size:15.5px}
+  .mod .mbar{height:6px;border-radius:99px;background:#0b1030;border:1px solid var(--line);overflow:hidden;margin-top:8px}
+  .mod .mbar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sun1),var(--sun3));transition:width .5s}
+  .mod .mchev{color:var(--faint);font-size:22px;flex-shrink:0}
+  .done-dot{color:var(--good);font-size:12px;flex-shrink:0;margin-left:8px}
+  .mastered-pill{font-size:10.5px;font-weight:800;color:var(--good);background:rgba(53,208,165,.16);border:1px solid rgba(53,208,165,.4);border-radius:20px;padding:2px 8px;white-space:nowrap;flex:none;margin-left:8px}
+  .prog-row{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+  .prog-row .prog-ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+  .prog-row .prog-meta{flex:1;min-width:0}
+  .prog-row .prog-meta b{font-size:14.5px}
+  .about-card{border-radius:20px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);margin-top:6px}
+  .about-card>.about-head{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;outline:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+  .about-card>.about-head::-webkit-details-marker{display:none}
+  .about-chev{font-size:20px;color:var(--sun1);transition:transform .22s ease;flex-shrink:0}
+  details.about-card[open] .about-chev{transform:rotate(180deg)}
+  details.about-card[open] .about-hint{display:none}
+  .about-body{margin-top:16px}
+  .about-card h3{font-size:19px;line-height:1.3}
+  .about-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .about-stats .astat{display:inline-flex;flex-direction:column;line-height:1.15;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:7px 12px}
+  .about-stats .astat b{font-size:15px;color:var(--sun1);font-family:var(--mono)}
+  .about-stats .astat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .about-feat{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:12px 13px}
+  .about-feat .af-ico{font-size:22px}
+  .about-feat b{display:block;font-size:13.5px;margin:5px 0 3px}
+  .about-feat span{display:block;color:var(--muted);font-size:12px;line-height:1.42}
+  .about-feat.hl{background:linear-gradient(135deg,rgba(255,179,64,.13),rgba(124,92,255,.13));border-color:rgba(255,179,64,.42)}
+  @media(max-width:560px){ .about-grid{grid-template-columns:1fr} }
+  .count-chip{display:inline-block;font-size:11px;font-weight:700;color:var(--muted);background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:2px 10px}
+  .pillwrap{display:flex;flex-wrap:wrap;gap:8px}
+  .pillopt{padding:9px 13px;border-radius:11px;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text);transition:border-color .12s,background .12s}
+  .pillopt:hover{border-color:var(--accent)}
+  .pillopt.sel{background:linear-gradient(180deg,var(--accent),#6246e0);border-color:transparent;color:#fff}
+  .pillopt.cnt{min-width:46px;text-align:center}
+  .gen-hero{border-radius:20px;padding:16px 18px;background:linear-gradient(135deg,#12324a,#0e2c46);border:1px solid var(--accent2)}
+  /* auth / login */
+  .auth-wrap{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+  .auth-card{width:100%;max-width:390px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+  .auth-logo{width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,var(--sun1),var(--sun3));display:grid;place-items:center;font-size:31px;margin:0 auto 12px}
+  .auth-title{text-align:center;font-size:27px;margin:0;letter-spacing:-.01em}
+  .auth-sub{text-align:center;color:var(--muted);font-size:14px;margin:8px 0 22px;line-height:1.45}
+  .auth-err{background:rgba(255,107,107,.12);border:1px solid var(--bad);color:#ffb1b1;font-size:13px;border-radius:11px;padding:9px 12px;margin-bottom:14px}
+  .gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:13px;background:#fff;color:#1f2330;border:none;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .gbtn:hover{filter:brightness(.96)}
+  .gbtn .gicon{font-weight:800;font-size:17px;color:#4285f4;font-family:Arial,sans-serif}
+  .auth-or{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:12px;margin:20px 0;text-transform:uppercase;letter-spacing:.06em}
+  .auth-card .field{margin-bottom:16px}
+  .auth-card .field input{padding:14px}
+  .auth-card>.btn{margin-top:4px;padding:14px}
+  .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+  .auth-switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:15px}
+  .auth-switch a{color:var(--accent2);font-weight:700;cursor:pointer}
+  .auth-note{text-align:center;font-size:11px;color:var(--faint);margin-top:16px;line-height:1.55}
+  .pw-wrap{position:relative}
+  .auth-card .pw-wrap input{padding-right:64px;width:100%}
+  .pw-toggle{position:absolute;top:50%;right:8px;transform:translateY(-50%);background:none;border:none;color:var(--accent2);font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;padding:6px 9px;border-radius:8px}
+  .pw-toggle:hover{background:rgba(92,200,255,.12)}
+  .idcombo{position:relative}
+  .idcombo .idmenu{display:none;position:absolute;top:100%;left:0;right:0;z-index:30;margin-top:6px;background:var(--surface2);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden auto;max-height:190px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+  .idcombo:focus-within .idmenu{display:block}
+  .idopt{display:flex;align-items:center;gap:9px;padding:11px 13px;cursor:pointer;font-size:14px;color:var(--text);outline:none}
+  .idopt:hover,.idopt:focus{background:rgba(124,92,255,.16)}
+  .idopt+.idopt{border-top:1px solid var(--line)}
+  .idopt .idic{opacity:.7}
+
+  /* Question / session */
+  .qtop{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+  .qbar{height:7px;background:#0b1030;border-radius:99px;margin:0 16px;overflow:hidden}
+  .qbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--sun1),var(--sun3));transition:width .35s}
+  .combo{font-weight:800;color:var(--sun1);font-family:var(--mono)}
+  .passage{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--accent);
+    padding:13px 14px;border-radius:12px;color:#d6dcff;line-height:1.55;font-size:15px}
+  .stem{font-size:18px;font-weight:600;line-height:1.4;color:#fff}
+  /* math notation (rendered by mathfmt) */
+  sup,sub{font-size:.74em;line-height:0}
+  .fr{display:inline-flex;flex-direction:column;vertical-align:-0.45em;text-align:center;margin:0 .14em}
+  .fr>.fn{border-bottom:1.3px solid currentColor;padding:0 .34em;line-height:1.3}
+  .fr>.fd{padding:0 .34em;line-height:1.3}
+  .rad{border-top:1.3px solid currentColor;padding:0 .18em;margin-left:.02em}
+  .opt{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--surface);
+    border:1.5px solid var(--line);cursor:pointer;text-align:left;width:100%;font-family:inherit;color:var(--text);
+    font-size:15.5px;line-height:1.4;transition:border-color .12s, background .12s}
+  .opt:hover{border-color:var(--accent)}
+  .opt .key{width:27px;height:27px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;
+    font-weight:800;flex-shrink:0;font-size:14px}
+  .opt.correct{border-color:var(--good);background:rgba(53,208,165,.13)}
+  .opt.correct .key{background:var(--good);color:#04231a}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,107,107,.12)}
+  .opt.wrong .key{background:var(--bad);color:#2a0808}
+  .opt.dim{opacity:.5}
+  .opt:disabled{cursor:default}
+  .feedback{border-radius:15px;padding:14px;border:1px solid var(--line)}
+  .feedback.ok{background:rgba(53,208,165,.1);border-color:rgba(53,208,165,.4)}
+  .feedback.no{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.4)}
+  .feedback h3{margin-bottom:5px}
+  .shake{animation:shake .4s}
+  @keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-6px)}}
+  .pop{animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  /* XP burst */
+  .burst{position:absolute;left:50%;top:38%;transform:translateX(-50%);pointer-events:none;z-index:40;
+    font-weight:900;font-size:34px;color:var(--sun1);text-shadow:0 4px 20px rgba(255,138,91,.6);
+    animation:burst 1s ease forwards}
+  @keyframes burst{0%{transform:translate(-50%,10px) scale(.6);opacity:0}
+    25%{opacity:1;transform:translate(-50%,-6px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-54px) scale(1)}}
+
+  /* Bottom nav */
+  .nav{display:flex;border-top:1px solid var(--line);background:rgba(9,12,30,.9);backdrop-filter:blur(8px)}
+  .tab{flex:1;background:none;border:none;cursor:pointer;padding:9px 4px 11px;color:var(--faint);
+    font-family:inherit;font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .tab .ti{font-size:19px;line-height:1;filter:grayscale(.4) opacity(.8)}
+  .tab.on{color:var(--text)}
+  .tab.on .ti{filter:none}
+  .tab.on::before{content:"";position:absolute}
+
+  /* Leaderboard */
+  .lb-row{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+  .lb-row.me{border-color:var(--accent);background:linear-gradient(180deg,rgba(124,92,255,.16),var(--surface))}
+  .rank{width:26px;text-align:center;font-weight:800;font-family:var(--mono);color:var(--muted)}
+  .rank.top{color:var(--gold)}
+  .av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#0a0f26;flex-shrink:0}
+  .av.em{color:#fff;font-size:20px}
+  .icon-x{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:13px;flex-shrink:0;display:grid;place-items:center}
+  .icon-x:hover{border-color:var(--bad);color:var(--bad)}
+  .fr-tap{cursor:pointer}
+
+  /* Achievements */
+  .ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .ach{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:13px;display:flex;gap:11px;align-items:center}
+  .ach.lock{opacity:.45;filter:grayscale(.7)}
+  .ach .em{font-size:26px;flex-shrink:0}
+  .ach small{color:var(--muted);font-size:11px;line-height:1.3;display:block;margin-top:2px}
+
+  /* Tutor */
+  .chat{display:flex;flex-direction:column;gap:11px;padding:16px 16px 8px}
+  .msg{max-width:85%;padding:11px 13px;border-radius:15px;line-height:1.5;font-size:14.5px}
+  .msg.bot{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start}
+  .msg.me{background:linear-gradient(180deg,var(--accent),#6246e0);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+  .msg.bot b{color:var(--sun1)}
+  .me-row{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+  .msg-del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:13px;padding:4px 5px;border-radius:8px;opacity:.5;flex:none}
+  .msg-del:hover{opacity:1;color:var(--bad);background:rgba(255,107,107,.1)}
+  .tutor-hero{display:flex;align-items:center;gap:13px}
+  .tutor-ava{width:50px;height:50px;border-radius:15px;background:linear-gradient(135deg,var(--sun1),var(--sun3));display:grid;place-items:center;font-size:27px;flex-shrink:0}
+  .suggest{display:flex;gap:8px;flex-wrap:wrap;padding:2px 16px 10px}
+  .sg{background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(9,12,30,.9)}
+  .composer input{flex:1}
+
+  /* Toasts */
+  #toasts{position:fixed;left:0;right:0;top:14px;z-index:100;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+  .toast{background:var(--surface2);border:1px solid var(--accent);border-radius:14px;padding:11px 15px;
+    display:flex;gap:10px;align-items:center;box-shadow:0 12px 30px -10px rgba(0,0,0,.8);animation:tin .3s ease;max-width:440px}
+  .toast .em{font-size:22px}
+  .toast b{font-size:14px}
+  .toast small{color:var(--muted);display:block;font-size:12px}
+  @keyframes tin{from{transform:translateY(-16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+  .steps{display:flex;gap:6px;justify-content:center;margin-top:4px}
+  .steps i{width:7px;height:7px;border-radius:99px;background:var(--line)}
+  .steps i.on{background:var(--sun2);width:20px}
+  .climber-pick{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .cp{width:60px;height:60px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);font-size:30px;display:grid;place-items:center;cursor:pointer}
+  .cp.sel{border-color:var(--sun2);background:rgba(255,138,91,.14)}
+  .pavatar{width:76px;height:76px;border-radius:20px;display:grid;place-items:center;font-size:40px;flex-shrink:0;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .bg-sw{width:40px;height:40px;border-radius:12px;cursor:pointer;border:2px solid transparent}
+  .bg-sw.sel{border-color:#fff;box-shadow:0 0 0 2px var(--accent)}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1px solid var(--line)}
+  .info-row:last-child{border-bottom:none}
+  .info-row .lbl{color:var(--muted);font-size:13px}
+  .info-row .val{font-weight:600}
+  .divline{height:1px;background:var(--line);margin:4px 0}
+  .badge-note{font-size:11px;color:var(--faint);background:var(--bg2);border:1px dashed var(--line);border-radius:10px;padding:8px 10px}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:13px}
+  .stat .big{font-size:24px;font-weight:800;font-family:var(--mono)}
+  .opt.pick{border-color:var(--accent);background:rgba(124,92,255,.14)}
+  .opt.pick .key{background:var(--accent);color:#fff}
+  .levelup{position:fixed;inset:0;display:grid;place-items:center;z-index:120;pointer-events:none;padding:20px}
+  .lucard{position:relative;background:var(--surface2);border:1px solid var(--sun2);border-radius:20px;padding:20px 28px;text-align:center;box-shadow:0 22px 60px -15px rgba(0,0,0,.85)}
+  .pc{position:absolute;left:50%;top:42%;width:8px;height:8px;border-radius:2px;transform:translate(-50%,-50%);animation:confetti .9s ease-out forwards;animation-delay:var(--d)}
+  @keyframes confetti{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.6)}}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+  .noanim *{animation:none!important;transition:none!important}
+
+  /* ============ WEBSITE SHELL (overrides the app's phone frame) ============ */
+  html,body{height:auto;min-height:100%;overflow:auto}
+  body{overflow-x:hidden}
+  #app{max-width:none;width:100%;min-height:100vh;height:auto;display:block;overflow:visible;box-shadow:none;background:transparent}
+  .site-header{position:sticky;top:0;z-index:50;display:flex;justify-content:center;background:rgba(9,12,30,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .hwrap{width:100%;max-width:1000px;display:flex;align-items:center;gap:16px;padding:12px 20px}
+  .brand{display:flex;align-items:center;gap:9px;cursor:pointer}
+  .brand .logo{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(160deg,var(--sun1),var(--sun3));font-size:16px}
+  .wordmark{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .wordmark .dot{color:var(--sun2)}
+  .nav{display:flex;gap:2px;flex:1}
+  .navlink{background:none;border:0;color:var(--muted);font-family:inherit;font-weight:700;font-size:14px;padding:9px 12px;border-radius:10px;cursor:pointer;transition:.15s}
+  .navlink:hover{color:var(--text);background:rgba(255,255,255,.05)}
+  .navlink.on{color:var(--text);background:rgba(124,92,255,.16)}
+  .hstat{display:flex;align-items:center;gap:8px}
+  .container{width:100%;max-width:640px;margin:0 auto;padding:0 14px 44px}
+  .mtn-wrap svg{max-height:400px}
+  .chatbox{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden;margin-top:10px}
+  .chatbox .chat{max-height:52vh;overflow-y:auto}
+  @media (max-width:640px){
+    .hwrap{gap:10px;padding:10px 12px;flex-wrap:wrap}
+    .nav{order:3;width:100%;overflow-x:auto;flex:none;gap:0;-webkit-overflow-scrolling:touch}
+    .navlink{padding:8px 10px;font-size:13px;white-space:nowrap}
+    .wordmark{font-size:18px}
+  }
+  .lvl-badge{font-size:11px;font-weight:800;letter-spacing:.04em;padding:4px 10px;border-radius:20px;white-space:nowrap;flex:none}
+  .lvl-intermediate{background:rgba(92,200,255,.16);color:var(--accent2);border:1px solid rgba(92,200,255,.35)}
+  .lvl-advanced{background:rgba(124,92,255,.18);color:#b9a6ff;border:1px solid rgba(124,92,255,.4)}
+  .lvl-mastered{background:rgba(53,208,165,.18);color:var(--good);border:1px solid rgba(53,208,165,.4)}
+  .lesson-ul{margin:6px 0 4px;padding-left:20px;color:#cfd6ff;line-height:1.55}
+  .lesson-ul li{margin:6px 0}
+
+  .age-gate{margin:4px 0 14px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:var(--bg2);text-align:left}
+  .age-gate p{font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.45}
+  .age-check{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--text);font-weight:700;cursor:pointer;line-height:1.4}
+  .age-check input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+  .site-legal{padding:22px 18px 32px;text-align:center;max-width:640px;margin:0 auto}
+  .site-legal .legal-disc{font-size:11px;color:var(--faint);line-height:1.55;margin-bottom:10px}
+  .site-legal .legal-links{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;font-size:12.5px}
+  .site-legal a{color:var(--accent2);font-weight:700;text-decoration:none}
+  .site-legal a:hover{text-decoration:underline}
+  .site-legal .legal-open{font-size:11px;color:var(--faint);margin-top:12px;line-height:1.5}
+  .res-card a{color:var(--accent2);font-weight:700}
+  .auth-wrap{flex-direction:column}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toasts"></div>
+
+<script src="data.js"></script>
+<script src="generators.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------------------------
+   ASCEND — gamified digital-SAT prep prototype (single-file, no dependencies)
+   Screens are rendered from a single `state` object; clicks are handled by
+   event delegation on [data-act]. Persistence uses localStorage w/ fallback.
+--------------------------------------------------------------------------- */
+
+/* ---------- Skill taxonomy (Section > Domain > Skill) ---------- */
+/* Content comes from data.js (window.ASCEND_DATA) — add or swap questions there. */
+var D = window.ASCEND_DATA || {skills:{},sections:{},questions:[]};
+var SKILLS = D.skills, SECTIONS = D.sections, Q = D.questions, LESSONS = D.lessons || [];
+var QBY = {}; Q.forEach(function(q){ (QBY[q.skill]=QBY[q.skill]||[]).push(q); });
+var GEN = (window.ASCEND_GEN && window.ASCEND_GEN.gens) || {};   // procedural question generators
+
+/* ---------- Achievements ---------- */
+var ACH = [
+  {id:"first_ascent",em:"🥾",name:"First Ascent",desc:"Finish your first session.",xp:50},
+  {id:"trailblazer",em:"🔥",name:"Trailblazer",desc:"Reach a 3-day streak.",xp:75},
+  {id:"week_warrior",em:"🗓️",name:"Week Warrior",desc:"Reach a 7-day streak.",xp:150},
+  {id:"sharpshooter",em:"🎯",name:"Sharpshooter",desc:"Answer 10 in a row correctly.",xp:120},
+  {id:"comeback_king",em:"💪",name:"Comeback King",desc:"Nail 3 right after missing 3.",xp:120},
+  {id:"math_master",em:"📐",name:"Math Master",desc:"90%+ over 20 Math questions.",xp:300},
+  {id:"wordsmith",em:"✍️",name:"Wordsmith",desc:"90%+ over 20 R&W questions.",xp:300},
+  {id:"centurion",em:"💯",name:"Centurion",desc:"Answer 100 questions total.",xp:200},
+  {id:"night_owl",em:"🦉",name:"Night Owl",desc:"Study after 10 PM.",xp:60},
+  {id:"early_bird",em:"🌅",name:"Early Bird",desc:"Study before 8 AM.",xp:60},
+  {id:"summit_test",em:"🧭",name:"Test Pilot",desc:"Finish a full-length practice test.",xp:400},
+  {id:"friendly",em:"🤝",name:"Rope Team",desc:"Add your first friend.",xp:80}
+];
+
+/* ---------- State ---------- */
+var CLIMBERS = ["🧗","🧗‍♀️","🏔️","⛰️","🗻","🏕️","🥾","🧭","🎒","⛺","🚵","🎿","🏂","🦊","🐐","🦅","🦉","🐺","🦁","🐧","☀️","🌄","🌲","🏆","⭐","🔥","🚀","💪","🧠","🎯"];
+var AVATAR_BGS = [
+  "linear-gradient(135deg,#7C5CFF,#5CC8FF)", "linear-gradient(135deg,#FF8A5B,#FF6BA0)",
+  "linear-gradient(135deg,#35D0A5,#5CC8FF)", "linear-gradient(135deg,#FFC46B,#FF8A5B)",
+  "linear-gradient(135deg,#FF6BA0,#7C5CFF)", "linear-gradient(135deg,#5CC8FF,#35D0A5)",
+  "linear-gradient(135deg,#F857A6,#FF5858)", "linear-gradient(135deg,#232a52,#3a436e)"
+];
+function avatarBg(){ return AVATAR_BGS[(state.profile.avatarBg||0)%AVATAR_BGS.length]; }
+/* ---- friends: derive stable display data from a username (simulated profiles) ---- */
+function prettyName(u){ return ((u||"").replace(/[_.\-]+/g," ").replace(/\b\w/g,function(c){return c.toUpperCase();}).trim())||u; }
+function friendAvatar(f){ return f.climber || CLIMBERS[hashStr(f.u)%CLIMBERS.length]; }
+function friendBg(f){ return AVATAR_BGS[(f.avatarBg!=null?f.avatarBg:hashStr(f.u+"bg")%AVATAR_BGS.length)]; }
+function friendPredicted(f){ return clamp(Math.round((950+levelFromXp(f.xp)*45+(hashStr(f.u+"s")%90))/10)*10,400,1600); }
+function friendAcc(f,sec){ return 58+hashStr(f.u+sec)%38; }   // 58–95%
+function friendStreak(f){ return hashStr(f.u+"st")%28; }
+var state = null;
+function defaultState(){
+  return {screen:"onboarding", onbStep:0,
+    profile:{name:"",username:"",currentScore:1000,targetScore:1400,dailyGoal:10,climber:"🧗",avatarBg:0},
+    base0:35, xp:0,
+    streak:{current:0,longest:0,lastActive:""},
+    todayCount:0, todayDate:"",
+    mastery:{}, mastered:{},
+    stats:{totalQ:0,maxCombo:0,missRun:0,correctRun:0,hadThreeMisses:false,sessions:0,timed:0,
+            sec:{math:{a:0,c:0},rw:{a:0,c:0}}},
+    missed:[],           // {id, when}
+    genSetup:{sec:"math",skill:"lin-eq",count:10},
+    achievements:{},
+    friends:[],   // new accounts start with no friends — add people by username in the Friends tab
+    tutor:[{who:"bot",text:"Hi! I'm <b>Sherpa</b>, your AI study guide. Ask me anything about the SAT — a concept, a strategy, or 'what should I study next?'"}],
+    settings:{reducedMotion:false},
+    session:null, lastResult:null
+  };
+}
+function initMastery(s){
+  // Every skill's mastery starts at 0 and is earned by practicing (Learn + Quiz Lab).
+  s.base0 = 0;
+  for(var k in SKILLS){ if(s.mastery[k]==null) s.mastery[k]=0; }
+}
+function mval(k){ var v=state.mastery[k]; return (typeof v==="number"&&!isNaN(v))?v:0; }
+
+/* ---------- Persistence ---------- */
+var mem={};   // in-memory fallback when localStorage is unavailable (keyed by storage key)
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return (k in mem)?mem[k]:null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+
+/* ---------- Accounts / auth ----------
+   Local layer for now: accounts live on this device. Structured to swap for real
+   Supabase Auth (email/phone + password) and Google OAuth once Ascend is hosted. */
+var SESSION={uid:null}, authMode="signin", authErr="", authVals={};
+function acctsAll(){ try{ return JSON.parse(lsGet("ascend_accounts")||"{}"); }catch(e){ return {}; } }
+function acctsSave(a){ lsSet("ascend_accounts", JSON.stringify(a)); }
+function normId(s){ return (s||"").trim().toLowerCase(); }
+function findAcct(id){ id=normId(id); if(!id)return null; var a=acctsAll(); for(var k in a){ var u=a[k]; if(normId(u.email)===id||normId(u.phone)===id||normId(u.username)===id) return u; } return null; }
+function hashPass(p){ var s="ascend7|"+String(p), h=5381; for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return "h"+h.toString(16); }
+function uidGen(){ return "u"+Date.now().toString(36)+Math.floor(Math.random()*1e7).toString(36); }
+function signUp(f){
+  var user=(f.username||"").trim(), email=(f.email||"").trim(), phone=(f.phone||"").trim();
+  if(user.length<2) return {err:"Choose a username (at least 2 characters)."};
+  if(!email && !phone) return {err:"Enter an email address or a phone number."};
+  if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return {err:"That email address doesn't look right."};
+  if(!email && phone.replace(/[^\d]/g,"").length<7) return {err:"Enter a valid email address or phone number."};
+  if((f.password||"").length<6) return {err:"Password must be at least 6 characters."};
+  if((email&&findAcct(email))||(phone&&findAcct(phone))) return {err:"An account with that email or phone already exists."};
+  if(findAcct(user)) return {err:"That username is already taken."};
+  var a=acctsAll(), uid=uidGen();
+  a[uid]={uid:uid,username:user,name:(f.name||"").trim(),email:email,phone:phone,pass:hashPass(f.password),provider:"password",created:Date.now()};
+  acctsSave(a); return {uid:uid};
+}
+function signIn(identifier,password){
+  var u=findAcct(identifier); if(!u) return {err:"No account found with that email, phone, or username."};
+  if(u.provider!=="password") return {err:"This account uses Google sign-in — tap “Continue with Google.”"};
+  if(u.pass!==hashPass(password)) return {err:"Incorrect password. Please try again."};
+  return {uid:u.uid};
+}
+function googleAuth(){   // local demo of Google sign-in; becomes real OAuth once hosted + backed by Supabase
+  var email="you@gmail.com", u=findAcct(email);
+  if(!u){ var a=acctsAll(), uid=uidGen(); a[uid]={uid:uid,username:"climber"+Math.floor(Math.random()*9000+1000),name:"Google User",email:email,phone:"",pass:"",provider:"google",created:Date.now()}; acctsSave(a); u=a[uid]; }
+  return {uid:u.uid};
+}
+function currentUid(){ try{ var s=JSON.parse(lsGet("ascend_session")||"null"); return (s&&s.uid)||null; }catch(e){ return null; } }
+function setSession(uid){ SESSION.uid=uid; lsSet("ascend_session", JSON.stringify({uid:uid})); }
+function clearSession(){ SESSION.uid=null; lsDel("ascend_session"); }
+// remembered sign-in credentials for the login dropdown (local only): [{show, pw}] keyed by identifier
+function credsAll(){ try{ var a=JSON.parse(lsGet("ascend_creds")||"[]"); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+function credsAdd(ids, pw){ var a=credsAll(); (ids||[]).forEach(function(id){ id=(id||"").trim(); if(!id)return; var k=normId(id), hit=false;
+  for(var i=0;i<a.length;i++){ if(normId(a[i].show)===k){ a[i]={show:id,pw:pw}; hit=true; break; } } if(!hit) a.push({show:id,pw:pw}); });
+  lsSet("ascend_creds", JSON.stringify(a)); }
+function credLookup(id){ var a=credsAll(), k=normId(id); for(var i=0;i<a.length;i++){ if(normId(a[i].show)===k) return a[i]; } return null; }
+function curAcct(){ return acctsAll()[SESSION.uid]||null; }
+function acctProfile(uid){ try{ var s=JSON.parse(lsGet("ascend_u_"+uid)||"null"); return (s&&s.profile)||null; }catch(e){ return null; } }
+function updateAccount(f){   // edit the signed-in account's contact info (validated, unique across accounts)
+  /* Hosted accounts manage email/password via Supabase Auth; the game profile
+     itself is stored in the protected progress record. */
+  if(typeof cloudReady==="function" && cloudReady()){
+    var hostedUser=(f.username||"").trim();
+    if(!/^[A-Za-z0-9_.]{2,20}$/.test(hostedUser)) return {err:"Username can use letters, numbers, . and _ (2–20 characters)."};
+    return {ok:true, username:hostedUser};
+  }
+  var a=acctsAll(), me=a[SESSION.uid]; if(!me) return {err:"No account is signed in."};
+  var user=(f.username||"").trim(), email=(f.email||"").trim(), phone=(f.phone||"").trim();
+  if(!/^[A-Za-z0-9_.]{2,20}$/.test(user)) return {err:"Username can use letters, numbers, . and _ (2–20 characters)."};
+  if(email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return {err:"That email address doesn't look right."};
+  if(phone && phone.replace(/[^\d]/g,"").length<7) return {err:"That phone number doesn't look right."};
+  for(var k in a){ if(k===SESSION.uid) continue; var o=a[k];
+    if(normId(o.username)===normId(user)) return {err:"That username is already taken."};
+    if(email && normId(o.email)===normId(email)) return {err:"That email is already used by another account."};
+    if(phone && normId(o.phone)===normId(phone)) return {err:"That phone is already used by another account."}; }
+  me.username=user; me.name=(f.name||"").trim(); me.email=email; me.phone=phone; acctsSave(a);
+  return {ok:true, username:user};
+}
+
+var KEY_LEGACY="ascend_v1";
+function curKey(){ return SESSION.uid ? ("ascend_u_"+SESSION.uid) : KEY_LEGACY; }
+function save(){ lsSet(curKey(), JSON.stringify(state)); }
+function load(){
+  var raw=lsGet(curKey());
+  if(!raw && SESSION.uid){ var legacy=lsGet(KEY_LEGACY); if(legacy && !lsGet("ascend_legacy_claimed")){ lsSet("ascend_legacy_claimed","1"); raw=legacy; } }
+  if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+  return null;
+}
+
+/* ---------- Hosted accounts and cloud progress ----------
+   Passwords never enter localStorage. Supabase Auth owns credentials and the
+   database policy only permits the signed-in student to read/write their row. */
+var CLOUD = window.ASCEND_CONFIG || {};
+var supabaseClient = null, saveTimer = null;
+if(CLOUD.supabaseUrl && CLOUD.supabaseAnonKey && window.supabase){
+  supabaseClient = window.supabase.createClient(CLOUD.supabaseUrl, CLOUD.supabaseAnonKey, {
+    auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
+  });
+}
+function cloudReady(){ return !!supabaseClient; }
+function cloudError(){ return "This deployment is not configured yet. Add its Supabase URL and publishable key to config.js."; }
+function saveCloud(){
+  if(!cloudReady() || !SESSION.uid || !state) return;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    supabaseClient.from("student_progress").upsert({user_id:SESSION.uid, state:state, updated_at:new Date().toISOString()}).then(function(r){
+      if(r.error) console.warn("Progress sync failed",r.error.message);
+    });
+  },350);
+}
+var saveLocal=save;
+save=function(){ saveLocal(); saveCloud(); };
+function loadCloudProgress(){
+  if(!cloudReady() || !SESSION.uid) return Promise.resolve();
+  return supabaseClient.from("student_progress").select("state").eq("user_id",SESSION.uid).maybeSingle().then(function(r){
+    if(r.error){ console.warn("Progress load failed",r.error.message); return; }
+    if(r.data && r.data.state){ state=r.data.state; initMastery(state); applyChrome(); render(); }
+    else saveCloud();
+  });
+}
+function startCloudSession(user){
+  SESSION.uid=user.id; lsSet("ascend_session",JSON.stringify({uid:user.id}));
+  bootUser(); loadCloudProgress();
+}
+
+/* ---------- Helpers ---------- */
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+/* ---- math/markdown notation renderer (OpenSAT uses $…$, \frac, \sqrt, ^, _, \cdot, *italics* …) ---- */
+function mfGrp(s,i){ var d=0,j=i,o=""; for(;j<s.length;j++){ var c=s[j]; if(c==="{"){ d++; if(d===1)continue; } else if(c==="}"){ d--; if(d===0)return [o,j+1]; } o+=c; } return [o,j]; }
+function mfCmd(s,name){ var tag="\\"+name,k; while((k=s.indexOf(tag))>=0){ var i=k+tag.length; while(s[i]===" ")i++; if(s[i]!=="{"){ s=s.slice(0,k)+s.slice(k+tag.length); continue; } var g=mfGrp(s,i); s=s.slice(0,k)+g[0]+s.slice(g[1]); } return s; }
+function mfFrac(s){ var k; while((k=s.indexOf("\\frac"))>=0){ var i=k+5; while(s[i]===" ")i++; if(s[i]!=="{"){ s=s.slice(0,k)+"/"+s.slice(k+5); continue; } var a=mfGrp(s,i); i=a[1]; while(s[i]===" ")i++; if(s[i]!=="{"){ s=s.slice(0,k)+a[0]+s.slice(a[1]); continue; } var b=mfGrp(s,i); s=s.slice(0,k)+'<span class="fr"><span class="fn">'+a[0]+'</span><span class="fd">'+b[0]+'</span></span>'+s.slice(b[1]); } return s; }
+function mfSqrt(s){ var k; while((k=s.indexOf("\\sqrt"))>=0){ var i=k+5; while(s[i]===" ")i++; var pre=""; if(s[i]==="["){ var c=s.indexOf("]",i); pre="<sup>"+s.slice(i+1,c)+"</sup>"; i=c+1; while(s[i]===" ")i++; } if(s[i]!=="{"){ s=s.slice(0,k)+pre+"√"+s.slice(i); continue; } var g=mfGrp(s,i); s=s.slice(0,k)+pre+'√<span class="rad">'+g[0]+"</span>"+s.slice(g[1]); } return s; }
+function mathfmt(t){
+  if(t.indexOf("$")<0 && t.indexOf("\\")<0 && t.indexOf("^")<0 && t.indexOf("_")<0 && t.indexOf("*")<0) return t;
+  t=t.replace(/\$\$?/g,"").replace(/\\\(/g,"").replace(/\\\)/g,"").replace(/\\\[/g,"").replace(/\\\]/g,"").replace(/\\displaystyle/g,"");
+  t=mfCmd(t,"text"); t=mfCmd(t,"mathrm"); t=mfCmd(t,"mathbf"); t=mfCmd(t,"mathit"); t=mfCmd(t,"mathsf"); t=mfCmd(t,"operatorname"); t=mfCmd(t,"overline");
+  t=mfFrac(t); t=mfSqrt(t);
+  t=t.replace(/\\left|\\right|\\!/g,"")
+     .replace(/\\cdot/g,"·").replace(/\\times/g,"×").replace(/\\div/g,"÷").replace(/\\pm/g,"±").replace(/\\mp/g,"∓")
+     .replace(/\\leq|\\le\b/g,"≤").replace(/\\geq|\\ge\b/g,"≥").replace(/\\neq|\\ne\b/g,"≠").replace(/\\approx/g,"≈").replace(/\\equiv/g,"≡")
+     .replace(/\\lt\b/g,"&lt;").replace(/\\gt\b/g,"&gt;")
+     .replace(/\\pi/g,"π").replace(/\\theta/g,"θ").replace(/\\alpha/g,"α").replace(/\\beta/g,"β").replace(/\\Delta/g,"Δ").replace(/\\mu/g,"µ").replace(/\\sqrt/g,"√")
+     .replace(/\\infty/g,"∞").replace(/\\circ/g,"°").replace(/\\degree/g,"°").replace(/\\angle/g,"∠")
+     .replace(/\\ldots|\\cdots|\\dots/g,"…").replace(/\\%/g,"%").replace(/\\\$/g,"$").replace(/\\,|\\;|\\:|\\ /g," ").replace(/\\{/g,"{").replace(/\\}/g,"}");
+  t=t.replace(/\^\{([^{}]*)\}/g,"<sup>$1</sup>").replace(/\^(-?[A-Za-z0-9]+)/g,"<sup>$1</sup>");
+  t=t.replace(/_\{([^{}]*)\}/g,"<sub>$1</sub>").replace(/_([A-Za-z0-9]+)/g,"<sub>$1</sub>");
+  t=t.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/\*([^*\n]+)\*/g,"<em>$1</em>");
+  t=t.replace(/\\([A-Za-z]+)/g,"$1");
+  return t;
+}
+function nl(s){ return mathfmt(esc(String(s))).replace(/\n/g,"<br>"); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function ydayStr(){ var d=new Date(Date.now()-864e5); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function hashStr(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
+var XP_BASE={1:10,2:15,3:20,4:30,5:45};
+function levelFromXp(xp){ return Math.max(1, Math.floor((-50+Math.sqrt(2500+200*xp))/100)+1); }
+function xpForLevel(L){ L=L-1; return 50*L*L+50*L; }               // cumulative XP to reach displayed level L
+var LEVEL_TITLES=["Trailhead Rookie","Day Hiker","Trekker","Scrambler","Ridge Runner","Alpinist","Mountaineer","High-Altitude Ace","Summit Contender","Peak Master"];
+function levelTitle(L){ return LEVEL_TITLES[Math.min(L-1,LEVEL_TITLES.length-1)]; }
+function overallMastery(){ var t=0,n=0; for(var k in SKILLS){ t+=(state.mastery[k]||0); n++; } return n?t/n:0; }
+function sectionMastery(sec){ var t=0,n=0; for(var k in SKILLS){ if(SKILLS[k].sec===sec){ t+=(state.mastery[k]||0); n++; } } return n?Math.round(t/n):0; }
+var MASTER_BONUS=10;   // predicted-score points added per skill mastered (a 10/10 on its Learn quiz)
+function masteredCount(){ var n=0, m=state.mastered||{}; for(var k in m){ if(m[k]) n++; } return n; }
+function predictedScore(){   // starts at your current score; only rises when you master skills (+10 each)
+  var cur=state.profile.currentScore;
+  return clamp(cur + MASTER_BONUS*masteredCount(), cur, 1600);
+}
+// The mountain is the SAT score scale: base = 400, peak = 1600.
+var SCORE_MIN=400, SCORE_MAX=1600;
+function scoreFrac(s){ return clamp((s-SCORE_MIN)/(SCORE_MAX-SCORE_MIN),0,1); }  // 400 -> base(0), 1600 -> peak(1)
+function climbFrac(){ return scoreFrac(predictedScore()); }                       // climber sits at the predicted score's height
+
+/* ---------- Toasts ---------- */
+function toast(em,title,sub){
+  var box=document.getElementById("toasts");
+  var el=document.createElement("div"); el.className="toast";
+  el.innerHTML='<div class="em">'+em+'</div><div><b>'+esc(title)+'</b>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</div>';
+  box.appendChild(el);
+  setTimeout(function(){ el.style.transition="opacity .4s"; el.style.opacity="0"; setTimeout(function(){ if(el.parentNode)el.parentNode.removeChild(el); },400); }, 2600);
+}
+
+/* ================= VIEWS ================= */
+function siteFooter(){
+  return '<footer class="site-legal">'
+    +'<p class="legal-disc">SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this product/site.</p>'
+    +'<div class="legal-links">'
+      +'<a href="privacy.html">Privacy</a>'
+      +'<a href="terms.html">Terms</a>'
+      +'<a href="pledge.html">Forever Free Pledge</a>'
+    +'</div>'
+    +'<p class="legal-open">Unofficial items include <a href="https://github.com/Anas099X/OpenSAT" target="_blank" rel="noopener">OpenSAT</a>. Not official College Board items.</p>'
+    +'</footer>';
+}
+function resourcesCard(afterTest){
+  return '<div class="card res-card"><div class="eyebrow">Resources</div>'
+    +(afterTest?'<p class="tiny muted" style="margin-top:8px">This is unofficial. Confirm with Bluebook™.</p>':'')
+    +'<p class="tiny muted" style="margin-top:8px">After one <a href="https://satsuite.collegeboard.org/practice/practice-tests/bluebook" target="_blank" rel="noopener">Bluebook™</a> test, climb 15 min/day here; take Bluebook™ again. Unofficial, not a replacement.</p>'
+    +'<p class="tiny muted" style="margin-top:8px">Fee waivers for 11th and 12th graders (FW26): <a href="https://satsuite.collegeboard.org/sat/registration/fee-waivers/fee-waiver-benefits" target="_blank" rel="noopener">College Board fee-waiver benefits</a>.</p>'
+    +'<p class="tiny muted" style="margin-top:8px"><a href="https://schoolhouse.world/sat-bootcamp" target="_blank" rel="noopener">Schoolhouse.world SAT Bootcamp</a> — free peer tutoring.</p>'
+    +'<p class="tiny muted" style="margin-top:8px">FAFSA typically opens October 1. The CSS Profile is a separate college-aid form.</p>'
+    +'</div>';
+}
+function chrome(body, tab){ return siteHeader(tab)+'<div class="container">'+body+'</div>'+siteFooter(); }
+function siteHeader(tab){
+  var L=levelFromXp(state.xp);
+  var items=[["home","Climb"],["learn","Learn"],["progress","Progress"],["generate","Quiz Lab"],["friends","Friends"],["tutor","Tutor"],["profile","Dashboard"]];
+  var nav=items.map(function(x){ return '<button class="navlink'+(tab===x[0]?" on":"")+'" data-act="go" data-arg="'+x[0]+'">'+x[1]+'</button>'; }).join("");
+  return '<header class="site-header"><div class="hwrap">'
+    +'<div class="brand" data-act="go" data-arg="home"><span class="logo">⛰️</span><span class="wordmark">Ascend<span class="dot">.</span></span></div>'
+    +'<nav class="nav">'+nav+'</nav>'
+    +'<div class="hstat"><span class="chip flame" title="Day streak">🔥 <span class="mono">'+state.streak.current+'</span></span>'
+    +'<span class="chip xp" title="Level '+L+'">Lv <span class="mono">'+L+'</span></span></div>'
+    +'</div></header>';
+}
+
+/* ----- Mountain SVG ----- */
+function pointAt(pts,f){
+  var seg=[],tot=0,i;
+  for(i=1;i<pts.length;i++){ var d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); seg.push(d); tot+=d; }
+  var dist=f*tot;
+  for(i=1;i<pts.length;i++){ if(dist<=seg[i-1]){ var t=seg[i-1]?dist/seg[i-1]:0; return [pts[i-1][0]+(pts[i][0]-pts[i-1][0])*t, pts[i-1][1]+(pts[i][1]-pts[i-1][1])*t]; } dist-=seg[i-1]; }
+  return pts[pts.length-1];
+}
+var TRAIL=[[36,250],[110,232],[74,205],[150,190],[110,160],[185,150],[150,120],[210,108],[186,84],[228,70],[212,50],[236,36]];
+// Smooth the switchback control points into a flowing curve (quadratic-midpoint; stays within the control polygon, no overshoot).
+function smoothPts(pts,seg){
+  if(pts.length<3) return pts.slice();
+  var out=[pts[0]], i, s;
+  for(i=1;i<pts.length-1;i++){
+    var p0=pts[i-1],p1=pts[i],p2=pts[i+1];
+    var ax=(p0[0]+p1[0])/2, ay=(p0[1]+p1[1])/2, bx=(p1[0]+p2[0])/2, by=(p1[1]+p2[1])/2;
+    for(s=0;s<=seg;s++){ var t=s/seg, mt=1-t; out.push([mt*mt*ax+2*mt*t*p1[0]+t*t*bx, mt*mt*ay+2*mt*t*p1[1]+t*t*by]); }
+  }
+  out.push(pts[pts.length-1]);
+  return out;
+}
+var STRAIL=smoothPts(TRAIL,10);   // dense smooth points — used for both the drawn trail and the climber/checkpoint/flag positions so they stay perfectly aligned
+var MARKS=[0,0.2,0.45,0.7,0.9,1.0];
+var prevFrac=null;
+function h2r(h){ h=h.replace("#",""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function mix(a,b,t){ var x=h2r(a),y=h2r(b); return "rgb("+Math.round(x[0]+(y[0]-x[0])*t)+","+Math.round(x[1]+(y[1]-x[1])*t)+","+Math.round(x[2]+(y[2]-x[2])*t)+")"; }
+function mountainSVG(){
+  var frac=climbFrac();   // climber height = predicted score on the 400 (base) → 1600 (peak) scale
+  var tgtPos=pointAt(STRAIL,scoreFrac(state.profile.targetScore));   // your goal, marked on the climb
+  // Sky shifts from deep night (0) toward a sunrise summit (1)
+  var top=mix("#080d24","#12224e",frac), midc=mix("#141a44","#5c3f7d",frac), low=mix("#241a3f","#ff9a5b",frac);
+  var stars="";
+  for(var i=0;i<38;i++){ var sx=hashStr("sx"+i)%398+1, sy=hashStr("sy"+i)%128+4, rr=(hashStr("sr"+i)%9)/10+.4;
+    var so=((0.25+(hashStr("so"+i)%55)/100)*(1-frac*0.88)).toFixed(2);
+    stars+='<circle cx="'+sx+'" cy="'+sy+'" r="'+rr.toFixed(1)+'" fill="#e9edff" opacity="'+so+'"/>'; }
+  // Sun rises and brightens with mastery
+  var sunY=(238-frac*176).toFixed(0), sunR=(15+frac*11).toFixed(0), sunO=(0.35+frac*0.6).toFixed(2), glowO=(0.14+frac*0.6).toFixed(2);
+  var chk="";
+  for(i=0;i<MARKS.length;i++){ var cp=pointAt(STRAIL,MARKS[i]); var reached=frac>=MARKS[i]-0.001;
+    chk+='<circle cx="'+cp[0]+'" cy="'+cp[1]+'" r="'+(reached?3.8:3)+'" fill="'+(reached?"#FFC46B":"#39426b")+'" stroke="#0a1030" stroke-width="1"/>'; }
+  var pos=pointAt(STRAIL,frac);
+  var trailPath="M"+STRAIL.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}).join(" L");
+  var tlen=0,qi; for(qi=1;qi<STRAIL.length;qi++){ tlen+=Math.hypot(STRAIL[qi][0]-STRAIL[qi-1][0],STRAIL[qi][1]-STRAIL[qi-1][1]); }
+  var walkedLen=frac*tlen;
+  // unwalked (dotted) portion: from the climber up to the summit
+  var uw=[pos], acc=0; for(qi=1;qi<STRAIL.length;qi++){ acc+=Math.hypot(STRAIL[qi][0]-STRAIL[qi-1][0],STRAIL[qi][1]-STRAIL[qi-1][1]); if(acc>walkedLen) uw.push(STRAIL[qi]); }
+  var unwalkedPath = uw.length>1 ? "M"+uw.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}).join(" L") : "";
+  // walked portion: little yellow circles tracing the path (instead of a solid line)
+  var pdots=""; for(var dl=0; dl<=walkedLen+0.001; dl+=8){ var dp=pointAt(STRAIL, tlen?dl/tlen:0); pdots+='<circle cx="'+dp[0].toFixed(1)+'" cy="'+dp[1].toFixed(1)+'" r="2.3" fill="#FFC46B"/>'; }
+  return ''
+  +'<svg viewBox="0 0 400 270" role="img" aria-label="Your climb toward your summit goal">'
+  +'<defs>'
+    +'<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+top+'"/><stop offset="0.5" stop-color="'+midc+'"/><stop offset="1" stop-color="'+low+'"/></linearGradient>'
+    +'<radialGradient id="sunglow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffd79b" stop-opacity="'+glowO+'"/><stop offset="1" stop-color="#ffd79b" stop-opacity="0"/></radialGradient>'
+  +'</defs>'
+  +'<rect width="400" height="270" fill="url(#sky)"/>'
+  +stars
+  +'<circle cx="250" cy="'+sunY+'" r="70" fill="url(#sunglow)"/>'
+  +'<circle cx="250" cy="'+sunY+'" r="'+sunR+'" fill="#ffcf7a" opacity="'+sunO+'"/>'
+  +'<polygon points="0,270 70,168 150,205 250,150 330,192 400,150 400,270" fill="'+mix("#2b3566","#7a5a86",frac)+'" opacity="0.55"/>'
+  +'<polygon points="0,270 90,196 180,150 250,120 320,175 400,140 400,270" fill="'+mix("#1c2450","#4a3568",frac)+'" opacity="0.85"/>'
+  +'<polygon points="0,270 120,175 236,26 360,175 400,150 400,270" fill="'+mix("#0f1533","#241a3a",frac)+'"/>'
+  +'<polygon points="236,26 210,70 236,66 258,86 236,26" fill="#f4f7ff" opacity="0.92"/>'
+  +'<path d="'+trailPath+'" fill="none" stroke="#0c1233" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>'
+  +(unwalkedPath?'<path d="'+unwalkedPath+'" fill="none" stroke="#586394" stroke-width="2.2" stroke-dasharray="1 5" stroke-linecap="round"/>':'')
+  +pdots
+  +chk
+  // peak = 1600 (the base is 400; label kept only at the summit so it never crowds the caption)
+  +'<text x="236" y="15" font-size="10.5" text-anchor="middle" fill="#eef2ff" font-weight="800" font-family="ui-monospace,monospace" stroke="#0a1030" stroke-width="2.4" paint-order="stroke">1600</text>'
+  // target-score marker (your goal) placed at its height on the climb
+  +'<g transform="translate('+tgtPos[0].toFixed(1)+','+tgtPos[1].toFixed(1)+')"><line x1="0" y1="1" x2="0" y2="-13" stroke="#ffd79b" stroke-width="1.3"/><path d="M0,-13 L11,-10.2 L0,-7.4 Z" fill="#FF6BA0"/><text x="14" y="-6" font-size="8.5" fill="#ffd79b" font-weight="800" font-family="ui-monospace,monospace" stroke="#0a1030" stroke-width="1.8" paint-order="stroke">'+state.profile.targetScore+'</text></g>'
+  +'<g id="climber" transform="translate('+pos[0]+','+pos[1]+')"><circle r="9.5" fill="#0b1030" opacity="0.5"/><text x="0" y="4.6" font-size="13.5" text-anchor="middle">'+state.profile.climber+'</text></g>'
+  +'</svg>';
+}
+function animateClimb(from,to){
+  var el=document.getElementById("climber"); if(!el)return;
+  if(state.settings.reducedMotion || Math.abs(to-from)<0.004){ var p=pointAt(STRAIL,to); el.setAttribute("transform","translate("+p[0]+","+p[1]+")"); return; }
+  var pf=pointAt(STRAIL,from); el.setAttribute("transform","translate("+pf[0]+","+pf[1]+")"); // paint at start point first
+  var t0=null;
+  function step(ts){ if(t0===null)t0=ts; var k=Math.min((ts-t0)/1100,1); var e=1-Math.pow(1-k,3);
+    var pp=pointAt(STRAIL,from+(to-from)*e);
+    if(document.getElementById("climber")!==el)return;
+    el.setAttribute("transform","translate("+pp[0].toFixed(1)+","+pp[1].toFixed(1)+")");
+    if(k<1)requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
+
+/* ----- Onboarding ----- */
+function viewOnboarding(){
+  var st=state.onbStep, p=state.profile;
+  var body="";
+  if(st===0){
+    body='<div class="center stack">'
+      +'<div style="font-size:56px">⛰️</div>'
+      +'<h1>Welcome to Ascend</h1>'
+      +'<p class="muted">Turn practice into a climb. Every skill you master lifts you toward your summit.</p>'
+      +'<div class="field" style="text-align:left"><label>What should we call you?</label>'
+      +'<input id="i_name" type="text" placeholder="Your name" value="'+esc(p.name)+'" autocomplete="off"></div>'
+      +'<div class="field" style="text-align:left"><label>Pick a username (friends add you by this)</label>'
+      +'<input id="i_user" type="text" placeholder="e.g. trailrunner22" value="'+esc(p.username)+'" autocomplete="off"></div>'
+      +'</div>';
+  } else if(st===1){
+    body='<div class="stack"><span class="eyebrow">Step 2 · Your starting point</span>'
+      +'<h1>What\'s a recent practice number?</h1>'
+      +'<p class="muted">Use an unofficial practice number — not an official SAT® exam score. This sets where your climber starts on the mountain.</p>'
+      +'<div class="card center"><div class="mono" id="cur_val" style="font-size:44px;font-weight:800;color:var(--sun1)">'+p.currentScore+'</div><div class="muted tiny">out of 1600</div>'
+      +'<input id="i_cur" type="range" min="400" max="1600" step="10" value="'+p.currentScore+'" style="width:100%;margin-top:12px" data-live="cur_val"></div>'
+      +'</div>';
+  } else if(st===2){
+    body='<div class="stack"><span class="eyebrow">Step 3 · Your summit</span>'
+      +'<h1>What number are you climbing toward?</h1>'
+      +'<p class="muted">This becomes the peak of your mountain. Make it a stretch you believe in.</p>'
+      +'<div class="card center"><div class="mono" id="tgt_val" style="font-size:44px;font-weight:800;color:var(--sun3)">'+p.targetScore+'</div><div class="muted tiny">out of 1600</div>'
+      +'<input id="i_tgt" type="range" min="400" max="1600" step="10" value="'+p.targetScore+'" style="width:100%;margin-top:12px" data-live="tgt_val"></div>'
+      +'</div>';
+  } else if(st===3){
+    body='<div class="stack"><span class="eyebrow">Step 4 · Your pace</span>'
+      +'<h1>How much will you climb each day?</h1>'
+      +'<p class="muted">Set a daily goal to keep your streak alive. You can change it anytime.</p>'
+      +'<div class="seg" id="goalseg">'+[5,10,20,40].map(function(g){ return '<div class="opt-pill '+(p.dailyGoal===g?"sel":"")+'" data-act="goal" data-arg="'+g+'">'+g+' questions</div>'; }).join("")+'</div>'
+      +'</div>';
+  } else {
+    body='<div class="center stack"><span class="eyebrow">Step 5 · Meet your climber</span>'
+      +'<h1>Choose your climber</h1>'
+      +'<div class="climber-pick">'+CLIMBERS.map(function(c){ return '<div class="cp '+(p.climber===c?"sel":"")+'" data-act="climber" data-arg="'+c+'">'+c+'</div>'; }).join("")+'</div>'
+      +'<div class="card soft" style="margin-top:8px"><div class="row"><div style="font-size:30px">'+p.climber+'</div>'
+      +'<div style="text-align:left"><b>'+(esc(p.name)||"Climber")+'</b><div class="muted tiny">Goal '+p.currentScore+' → '+p.targetScore+' · '+p.dailyGoal+' questions/day</div></div></div></div>'
+      +'</div>';
+  }
+  var nextLabel = st>=4 ? "Start climbing →" : "Continue →";
+  var dots='<div class="steps">'+[0,1,2,3,4].map(function(i){return '<i class="'+(i<=st?"on":"")+'"></i>';}).join("")+'</div>';
+  return '<div class="pad" style="min-height:88vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+    +body
+    +'<div style="margin-top:22px" class="stack">'+dots
+    +'<button class="btn" data-act="onbNext">'+nextLabel+'</button>'
+    +(st>0?'<div class="center"><span class="link" data-act="onbBack">← Back</span></div>':'')
+    +'</div>'+siteFooter()+'</div>';
+}
+
+/* ----- Home ----- */
+function viewHome(){
+  var pred=predictedScore(), p=state.profile, L=levelFromXp(state.xp);
+  var lo=Math.max(400,pred-20), hi=Math.min(1600,pred+20);
+  var xpInto=state.xp-xpForLevel(L), xpSpan=xpForLevel(L+1)-xpForLevel(L);
+  var goalPct=clamp(Math.round(state.todayCount/p.dailyGoal*100),0,100);
+  return '<div class="pad stack">'
+    +'<div class="between"><div><div class="eyebrow">Your climb</div><h2>Hi '+(esc(p.name)||"climber")+' 👋</h2></div>'
+      +'<div class="ring" data-v="'+goalPct+'%" style="--p:'+goalPct+'" title="Today\'s goal"></div></div>'
+    +'<div class="mtn-wrap">'+mountainSVG()
+      +'<div class="goal-badge"><div class="tiny muted">🎯 GOAL</div><div class="mono" style="font-weight:800;color:var(--sun1)">'+p.targetScore+'</div></div>'
+      +'<div class="mtn-cap"><div><div class="tiny muted">Climb progress</div><div class="mono" style="font-size:22px;font-weight:800">'+lo+'–'+hi+'</div></div>'
+        +'<div style="text-align:right"><div class="tiny muted">Overall mastery</div><div class="mono" style="font-size:18px;font-weight:800;color:var(--good)">'+Math.round(overallMastery())+'%</div></div></div>'
+    +'</div>'
+    +'<div class="card soft"><div class="between"><div><b>Level '+L+'</b> · <span class="muted">'+esc(levelTitle(L))+'</span></div>'
+      +'<div class="mono tiny muted">'+xpInto+' / '+xpSpan+' XP</div></div>'
+      +'<div class="bar xp" style="margin-top:9px"><i style="width:'+clamp(xpInto/xpSpan*100,3,100)+'%"></i></div></div>'
+    +'<button class="btn" data-act="go" data-arg="learn">📚 Learn &amp; practice</button>'
+    +'<div class="card" data-act="startFullTest" style="cursor:pointer;background:linear-gradient(120deg,#231a48,#3a2560);border-color:var(--accent)"><div class="between"><div class="row"><div style="font-size:24px">🧭</div><div><b>Full-Length Adaptive Test</b><div class="muted tiny">98 questions · 2 hr 14 min · unofficial practice total</div></div></div><span style="color:var(--sun1);font-size:20px">›</span></div></div>'
+    +(state.missed.length?'<button class="btn ghost small" data-act="go" data-arg="review">📓 Review missed questions ('+state.missed.length+')</button>':'')
+    +aboutAscend()
+    +resourcesCard(false)
+    +'</div>';
+}
+function aboutAscend(){   // front-page "About us" — what Ascend is + gamified highlights
+  var feats=[
+    {i:"🎮",t:"Gamified to the core",d:"Earn XP, level up, keep your daily streak alive, chain answer combos, and unlock achievements every time you climb.",hl:true},
+    {i:"⛰️",t:"Climb to your summit",d:"Every skill you master moves your climber up the mountain toward your summit goal.",hl:true},
+    {i:"📚",t:"25 skill modules",d:"Guided lessons plus practice for every Reading &amp; Writing and Math skill on the digital SAT."},
+    {i:"🧭",t:"Full-length adaptive test",d:"A realistic 98-question, section-adaptive unofficial practice exam — not an official score."},
+    {i:"🎲",t:"Endless Quiz Lab",d:"Generate fresh questions on any skill, any time you want more reps."},
+    {i:"🏅",t:"Master &amp; track",d:"Score 10/10 to master a skill and watch every skill fill up in the Progress tab."},
+    {i:"🤝",t:"Climb with friends",d:"Add friends, compare on the leaderboard, and stay motivated together."}
+  ];
+  var stats=[["400–1600","scored"],["2","sections"],["98","-question test"],["25","skill modules"],["2,400+","questions"]];
+  return '<details class="about-card">'
+    +'<summary class="about-head"><div><div class="eyebrow" style="color:var(--sun1)">About us</div>'
+      +'<h3 style="margin:5px 0 0">Turn practice into a climb. Every skill you master lifts you toward your summit.</h3>'
+      +'<div class="tiny muted about-hint" style="margin-top:4px">Tap to learn what Ascend is →</div></div>'
+      +'<span class="about-chev">▾</span></summary>'
+    +'<div class="about-body">'
+      +'<p class="muted" style="font-size:14px;line-height:1.55;margin:0 0 14px"><b style="color:var(--text)">Ascend</b> is unofficial practice that makes studying feel like leveling up in a game. Learn a concept, practice it, and every skill you master lifts your climber closer to your goal — <b style="color:var(--text)">climb progress, not an official score</b>.</p>'
+      +'<div class="about-stats">'+stats.map(function(s){ return '<span class="astat"><b>'+s[0]+'</b>'+s[1]+'</span>'; }).join("")+'</div>'
+      +'<div class="about-grid">'+feats.map(function(f){ return '<div class="about-feat'+(f.hl?" hl":"")+'"><div class="af-ico">'+f.i+'</div><b>'+f.t+'</b><span>'+f.d+'</span></div>'; }).join("")+'</div>'
+      +'<div class="tiny muted" style="margin-top:12px;text-align:center">Shaped like the current Digital SAT® exam. Unofficial. Use Bluebook™ for official tests.</div>'+'<div class="tiny muted" style="margin-top:10px;text-align:center">Unofficial items include <a href="https://github.com/Anas099X/OpenSAT" target="_blank" rel="noopener">OpenSAT</a>. Not official College Board items.</div>'
+    +'</div>'
+    +'</details>';
+}
+function weakestSkill(){ var best=null,bv=999; for(var k in SKILLS){ if(!QBY[k])continue; if(state.mastery[k]<bv){ bv=state.mastery[k]; best=k; } } return best; }
+
+/* ----- (Practice is merged into Learn — see viewLearn / viewLesson) ----- */
+
+/* ----- Session ----- */
+function startSession(opts){
+  // opts: {mode, skill?, sec?, size, timed}
+  var pool;
+  if(opts.skill) pool=(QBY[opts.skill]||[]).slice();
+  else if(opts.sec) pool=Q.filter(function(q){return q.sec===opts.sec;});
+  else pool=Q.slice();
+  pool=shuffle(pool);
+  var size=Math.min(opts.size||5, pool.length);
+  var queue=pool.slice(0,size).map(function(q){return q.id;});
+  state.session={mode:opts.mode,skill:opts.skill||null,sec:opts.sec||null,queue:queue,i:0,
+    answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:!!opts.timed,start:Date.now()};
+  state.screen="session"; save(); render();
+  if(opts.timed) startTimer();
+}
+var timerH=null;
+function startTimer(){ stopTimer(); timerH=setInterval(function(){ var el=document.getElementById("timerLabel"); if(el&&state.session){ var s=Math.floor((Date.now()-state.session.start)/1000); el.textContent=("0"+Math.floor(s/60)).slice(-2)+":"+("0"+(s%60)).slice(-2); } },1000); }
+function stopTimer(){ if(timerH){ clearInterval(timerH); timerH=null; } }
+
+function curQ(){ var s=state.session, id=s.queue[s.i]; return (s.genMap&&s.genMap[id]) || Q.find(function(q){return q.id===id;}); }
+function viewSession(){
+  var s=state.session, q=curQ();
+  var pct=Math.round(s.i/s.queue.length*100);
+  var head='<div class="qtop"><span class="link" data-act="quitSession">✕ Exit</span>'
+    +'<span class="mono tiny muted">'+(s.i+1)+' / '+s.queue.length+'</span>'
+    +(s.timed?'<span class="mono combo" id="timerLabel">00:00</span>':(s.combo>1?'<span class="combo">🔥 '+s.combo+'x</span>':'<span class="tiny muted">'+SKILLS[q.skill].name+'</span>'))
+    +'</div><div class="qbar"><i style="width:'+pct+'%"></i></div>';
+  var bodyInner;
+  if(!s.answered){
+    bodyInner='<div class="pad stack">'
+      +(q.passage?'<div class="passage">'+nl(q.passage)+'</div>':'')
+      +'<div class="stem">'+nl(q.stem)+'</div>';
+    if(q.type==="grid"){
+      bodyInner+='<div class="field"><label class="muted tiny">Enter your answer</label>'
+        +'<input id="gridin" type="text" inputmode="decimal" placeholder="Type a number" autocomplete="off" data-enter="submitGrid"></div>'
+        +'<button class="btn" data-act="submitGrid">Check answer</button>';
+    } else {
+      bodyInner+='<div class="stack" style="gap:10px">'+q.options.map(function(o){
+        return '<button class="opt" data-act="answer" data-arg="'+o.k+'"><span class="key">'+o.k+'</span><span>'+nl(o.t)+'</span></button>';
+      }).join("")+'</div>';
+    }
+    bodyInner+='</div>';
+  } else {
+    bodyInner=viewFeedback(q);
+  }
+  return '<div style="display:flex;flex-direction:column;min-height:100vh;max-width:600px;margin:0 auto">'+head+'<div class="screen">'+bodyInner+'</div></div>';
+}
+function viewFeedback(q){
+  var s=state.session, r=s.results[s.results.length-1];
+  var opts="";
+  if(q.type==="grid"){
+    opts='<div class="opt '+(r.correct?"correct":"wrong")+'"><span class="key">✓</span><span>Correct answer: <b>'+esc(q.correct)+'</b>'+(!r.correct?' · you entered '+esc(r.given||"—"):'')+'</span></div>';
+  } else {
+    opts='<div class="stack" style="gap:10px">'+q.options.map(function(o){
+      var cls="opt dim"; if(o.k===q.correct)cls="opt correct"; else if(o.k===r.given)cls="opt wrong";
+      return '<div class="'+cls+'"><span class="key">'+o.k+'</span><span>'+nl(o.t)+'</span></div>';
+    }).join("")+'</div>';
+  }
+  var fb=r.correct
+    ? '<div class="feedback ok pop"><h3 style="color:var(--good)">✓ '+pickPraise()+' +'+r.xp+' XP</h3><p>'+nl(q.exp)+'</p></div>'
+    : '<div class="feedback no"><h3 style="color:var(--bad)">Not quite — here\'s why</h3><p>'+nl(q.exp)+'</p></div>';
+  var last=s.i>=s.queue.length-1;
+  return '<div class="pad stack '+(r.correct?"":"shake")+'">'
+    +(q.passage?'<div class="passage">'+nl(q.passage)+'</div>':'')
+    +'<div class="stem">'+nl(q.stem)+'</div>'
+    +opts+fb
+    +'<button class="btn" data-act="nextQ">'+(last?"See summary →":"Continue →")+'</button>'
+    +'</div>';
+}
+var PRAISE=["Nailed it!","Clean climb!","Sharp!","Onward and up!","Solid foothold!","Nice pace!"];
+function pickPraise(){ return PRAISE[Math.floor(Math.random()*PRAISE.length)]; }
+
+function gradeAnswer(given){
+  var s=state.session, q=curQ(), correct;
+  if(q.type==="grid"){ var acc=q.accept||[q.correct]; correct=acc.indexOf(String(given).trim())>=0; }
+  else correct=(given===q.correct);
+  var gain;
+  if(correct){ s.combo++; var mult=Math.min(1+0.1*(s.combo-1),2); gain=Math.round((XP_BASE[q.diff]||15)*mult); s.correct++;
+    state.mastery[q.skill]=clamp(mval(q.skill)+ (q.diff>=4?9:7), 0,100);
+  } else { s.combo=0; gain=2;
+    state.mastery[q.skill]=clamp(mval(q.skill)-5,0,100);
+    if(!q.gen && !state.missed.some(function(m){return m.id===q.id;})) state.missed.unshift({id:q.id,when:Date.now()});
+  }
+  s.xp+=gain; grantXP(gain);
+  s.results.push({id:q.id,correct:correct,given:given,xp:gain});
+  // stats
+  var st=state.stats; st.totalQ++; st.sec[q.sec].a++; if(correct)st.sec[q.sec].c++;
+  if(s.combo>st.maxCombo)st.maxCombo=s.combo;
+  if(correct){ st.correctRun++; st.missRun=0; if(st.hadThreeMisses&&st.correctRun>=3){ unlock("comeback_king"); st.hadThreeMisses=false; } }
+  else { st.missRun++; st.correctRun=0; if(st.missRun>=3)st.hadThreeMisses=true; }
+  markToday();
+  s.answered=true; s.selected=given;
+  checkAchievements();
+  if(correct) xpBurst(gain);
+  save(); render();
+}
+function xpBurst(n){ if(state.settings.reducedMotion)return; var b=document.createElement("div"); b.className="burst"; b.textContent="+"+n; document.getElementById("app").appendChild(b); setTimeout(function(){ if(b.parentNode)b.parentNode.removeChild(b); },1000); }
+
+function finishSession(){
+  stopTimer();
+  var s=state.session;
+  state.stats.sessions++;
+  if(s.timed) state.stats.timed++;
+  bumpStreak();
+  // Mastery: a perfect score on a module's Learn quiz masters that skill (fills its bar + raises predicted score)
+  if(!state.mastered)state.mastered={};
+  var newMastery = (s.mode==="module" && s.skill && s.queue.length>=10 && s.correct===s.queue.length && !state.mastered[s.skill]);
+  var already = (s.mode==="module" && s.skill && s.correct===s.queue.length && !newMastery);
+  if(newMastery){ state.mastered[s.skill]=true; state.mastery[s.skill]=100; }
+  state.lastResult={correct:s.correct,total:s.queue.length,xp:s.xp,timed:s.timed,skill:s.skill,sec:s.sec,gen:s.gen,genReq:s.genReq,mastered:newMastery,already:already,secs:Math.round((Date.now()-s.start)/1000)};
+  unlock("first_ascent");
+  if(s.timed) unlock("summit_test");
+  checkAchievements();
+  state.session=null; state.screen="summary"; save(); render();
+  if(newMastery) celebrate("Skill mastered! 🏅", "Nice — that skill is now fully mastered.");
+}
+function markToday(){
+  var t=todayStr();
+  if(state.todayDate!==t){ state.todayDate=t; state.todayCount=0; }
+  state.todayCount++;
+}
+function bumpStreak(){
+  var t=todayStr();
+  if(state.streak.lastActive===t)return;
+  if(state.streak.lastActive===ydayStr()) state.streak.current++;
+  else state.streak.current=1;
+  state.streak.lastActive=t;
+  if(state.streak.current>state.streak.longest)state.streak.longest=state.streak.current;
+}
+
+/* ----- Summary ----- */
+function viewSummary(){
+  var r=state.lastResult, acc=Math.round(r.correct/r.total*100), L=levelFromXp(state.xp);
+  var msg = r.mastered?"Skill mastered! 🏅":acc>=80?"Strong climb! 🏔️":acc>=50?"Good progress — keep going.":"Every step counts. Review and try again.";
+  var note = r.skill ? (r.mastered
+      ? '<div class="card soft" style="margin-top:6px;border-color:rgba(53,208,165,.4)"><span style="color:var(--good);font-weight:700">🏅 Skill mastered — great work!</span></div>'
+      : r.already
+      ? '<div class="card soft" style="margin-top:6px"><span class="muted tiny">You\'ve already mastered this skill — nicely done.</span></div>'
+      : '<div class="card soft" style="margin-top:6px"><span class="muted tiny">Score a perfect <b style="color:var(--sun1)">10/10</b> to master this skill.</span></div>') : '';
+  return '<div class="pad stack center" style="min-height:88vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+    +'<div style="font-size:52px">'+(r.mastered?"🏅":acc>=80?"🎉":acc>=50?"💪":"📈")+'</div>'
+    +'<h1>'+msg+'</h1>'
+    +'<div class="stat-grid" style="margin-top:6px">'
+      +'<div class="stat"><div class="muted tiny">Correct</div><div class="big" style="color:var(--good)">'+r.correct+'/'+r.total+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">XP earned</div><div class="big" style="color:var(--accent2)">+'+r.xp+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Accuracy</div><div class="big">'+acc+'%</div></div>'
+      +'<div class="stat"><div class="muted tiny">'+(r.timed?"Time":"Level")+'</div><div class="big">'+(r.timed?Math.floor(r.secs/60)+"m "+(r.secs%60)+"s":L)+'</div></div>'
+    +'</div>'
+    +note
+    +'<div class="card soft" style="margin-top:6px"><div class="between"><span class="muted tiny">🔥 '+state.streak.current+'-day streak</span><span class="muted tiny">Climb progress '+predictedScore()+'</span></div></div>'
+    +'<div class="stack" style="margin-top:14px">'
+      +(r.gen
+         ? '<button class="btn" data-act="genAgain">🎲 Generate '+r.genReq.count+' more →</button>'
+           +'<button class="btn ghost" data-act="go" data-arg="generate">Back to generator</button>'
+         : r.skill
+         ? '<button class="btn" data-act="practiceModule" data-arg="'+r.skill+'">Practice '+Math.min(10,(QBY[r.skill]||[]).length)+' more →</button>'
+           +'<button class="btn ghost" data-act="openLesson" data-arg="'+r.skill+'">Back to the lesson</button>'
+           +'<button class="btn ghost" data-act="go" data-arg="learn">All modules</button>'
+         : '<button class="btn" data-act="go" data-arg="learn">📚 Keep climbing</button>'
+           +'<button class="btn ghost" data-act="go" data-arg="home">Back to mountain</button>')
+    +'</div></div>';
+}
+
+/* ----- Quiz Generator ----- */
+function genSkillsFor(sec){ return Object.keys(SKILLS).filter(function(k){ return SKILLS[k].sec===sec && GEN[k]; }); }
+function viewGenerator(){
+  var g=state.genSetup||{sec:"math",skill:"lin-eq",count:10};
+  var list=genSkillsFor(g.sec);
+  if(list.indexOf(g.skill)<0){ g.skill=list[0]; }
+  var out='<div class="pad stack"><div class="eyebrow">Quiz Generator</div><h2>Endless practice</h2>'
+    +'<div class="gen-hero"><div class="tiny" style="color:var(--accent2);font-weight:800;letter-spacing:.05em">FRESH EVERY TIME</div>'
+      +'<div style="font-size:14.5px;margin-top:4px;color:#e8ecff;line-height:1.45">Run out of questions in a module? Pick a skill and a number, and the app builds brand-new questions on the spot — each with a worked explanation.</div></div>'
+    +'<div class="dom-label">1 · Section</div>'
+    +'<div class="seg"><div class="opt-pill '+(g.sec==="math"?"sel":"")+'" data-act="genSec" data-arg="math">🧮 Math</div>'
+      +'<div class="opt-pill '+(g.sec==="rw"?"sel":"")+'" data-act="genSec" data-arg="rw">📚 Reading &amp; Writing</div></div>'
+    +'<div class="dom-label">2 · Skill</div><div class="pillwrap">'
+    + list.map(function(k){ return '<div class="pillopt '+(g.skill===k?"sel":"")+'" data-act="genSkill" data-arg="'+k+'">'+SKILLS[k].ico+' '+esc(SKILLS[k].name)+'</div>'; }).join("")
+    +'</div>'
+    +'<div class="dom-label">3 · How many questions?</div><div class="pillwrap">'
+    + [5,10,15,20,25,30].map(function(n){ return '<div class="pillopt cnt '+(g.count===n?"sel":"")+'" data-act="genCount" data-arg="'+n+'">'+n+'</div>'; }).join("")
+    +'</div>'
+    +'<button class="btn" data-act="genGo" style="margin-top:6px">🎲 Generate '+g.count+' '+esc(SKILLS[g.skill].name)+' questions →</button>'
+    +'<div class="badge-note">Questions are generated on your device from Ascend\'s templates — math is computed fresh (always correct and unlimited), and reading items are drawn in new combinations from a curated bank.</div>'
+    +'</div>';
+  return out;
+}
+function startGenSession(skill,count){
+  var gen=GEN[skill]; if(!gen){ toast("🎲","Not available yet","This skill doesn't have a generator."); return; }
+  var ids=[], map={};
+  for(var i=0;i<count;i++){ var q=null; try{ q=gen(); }catch(e){ q=null; } if(!q)continue;
+    q.id="gen_"+i+"_"+Math.floor(Math.random()*1e7); q.skill=skill; q.sec=SKILLS[skill].sec; q.gen=true;
+    ids.push(q.id); map[q.id]=q; }
+  if(!ids.length){ toast("🎲","Try again","Couldn't generate right now — please retry."); return; }
+  state.session={mode:"generated",gen:true,genReq:{skill:skill,count:count},skill:skill,sec:SKILLS[skill].sec,
+    queue:ids,genMap:map,i:0,answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:false,start:Date.now()};
+  state.screen="session"; save(); render();
+}
+
+/* ----- Review ----- */
+function viewReview(){
+  if(!state.missed.length) return '<div class="pad stack"><h2>Review</h2><div class="card center"><div style="font-size:40px">✨</div><p>No missed questions yet. When you miss one, it lands here with a full explanation.</p></div></div>';
+  var out='<div class="pad stack"><div class="between"><h2>📓 Review</h2><span class="muted tiny">'+state.missed.length+' to review</span></div>'
+    +'<p class="muted tiny">Questions you missed, with the correct answer and why. Master them to clear them.</p>';
+  state.missed.forEach(function(m){
+    var q=Q.find(function(x){return x.id===m.id;}); if(!q)return;
+    var ansTxt = q.type==="grid" ? q.correct : (q.options.find(function(o){return o.k===q.correct;})||{}).t;
+    out+='<div class="card stack">'
+      +'<div class="tiny" style="color:var(--sun1);font-weight:700">'+SKILLS[q.skill].name+'</div>'
+      +(q.passage?'<div class="passage tiny">'+nl(q.passage)+'</div>':'')
+      +'<div style="font-weight:600">'+nl(q.stem)+'</div>'
+      +'<div class="opt correct"><span class="key">✓</span><span>'+nl(ansTxt)+'</span></div>'
+      +'<div class="feedback ok"><p>'+nl(q.exp)+'</p></div>'
+      +'<div class="row" style="gap:10px"><button class="btn ghost small grow" data-act="retryOne" data-arg="'+q.id+'">Try again</button>'
+      +'<button class="btn ghost small grow" data-act="clearMiss" data-arg="'+q.id+'">Mark reviewed</button></div>'
+      +'</div>';
+  });
+  out+='</div>';
+  return out;
+}
+
+/* ----- Friends / Leaderboard ----- */
+function viewFriends(){
+  var tab=state.friendsTab||"leaderboard";
+  var out='<div class="pad stack"><div class="eyebrow">Rope team</div><h2>Friends</h2>'
+    +'<div class="seg">'
+      +'<div class="opt-pill '+(tab==="leaderboard"?"sel":"")+'" data-act="friendsTab" data-arg="leaderboard">🏆 Leaderboard</div>'
+      +'<div class="opt-pill '+(tab==="list"?"sel":"")+'" data-act="friendsTab" data-arg="list">👥 My Friends</div>'
+    +'</div>'
+    +'<div class="card"><div class="field"><label>Add a friend by username</label>'
+      +'<div class="row"><input id="friendInput" type="text" placeholder="their username" autocomplete="off" data-enter="addFriend">'
+      +'<button class="btn small" style="width:auto" data-act="addFriend">Add</button></div></div></div>';
+  out += (tab==="list") ? friendsListBody() : leaderboardBody();
+  out+='<div class="badge-note">In this prototype, friends are simulated locally so you can feel the loop. In production, adding a username sends a real friend request and both the list and leaderboard sync live across accounts.</div></div>';
+  return out;
+}
+function leaderboardBody(){
+  var me={u:state.profile.username||"you",xp:state.xp,me:true,climber:state.profile.climber,avatarBg:state.profile.avatarBg};
+  var all=state.friends.map(function(f){return {u:f.u,xp:f.xp,climber:f.climber,avatarBg:f.avatarBg};}).concat([me]);
+  all.sort(function(a,b){return b.xp-a.xp;});
+  var out="";
+  all.forEach(function(f,i){
+    var L=levelFromXp(f.xp);
+    out+='<div class="lb-row '+(f.me?"me":"")+'">'
+      +'<div class="rank '+(i<3?"top":"")+'">'+(i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1))+'</div>'
+      +'<div class="av em" style="background:'+(f.me?avatarBg():friendBg(f))+'">'+(f.me?state.profile.climber:friendAvatar(f))+'</div>'
+      +'<div class="grow'+(f.me?"":" fr-tap")+'"'+(f.me?"":' data-act="viewFriend" data-arg="'+esc(f.u)+'"')+'><b>'+esc(f.me?(state.profile.username||"you"):prettyName(f.u))+(f.me?' <span class="muted tiny">(you)</span>':'')+'</b>'
+      +'<div class="muted tiny">Level '+L+' · '+esc(levelTitle(L))+'</div></div>'
+      +'<div class="mono" style="font-weight:800;color:var(--accent2)">'+f.xp+'<span class="tiny muted"> XP</span></div>'
+      +'</div>';
+  });
+  return out;
+}
+function friendsListBody(){
+  if(!state.friends.length) return '<div class="card center"><div style="font-size:34px">👋</div><p class="muted" style="margin-top:6px">No friends yet. Add someone by their username above to start a rope team.</p></div>';
+  var list=state.friends.slice().sort(function(a,b){return prettyName(a.u).localeCompare(prettyName(b.u));});
+  var out='<div class="between" style="padding:0 2px"><span class="muted tiny">'+list.length+' friend'+(list.length===1?"":"s")+'</span><span class="muted tiny">tap a name to view profile</span></div>';
+  list.forEach(function(f){
+    var L=levelFromXp(f.xp);
+    out+='<div class="lb-row">'
+      +'<div class="av em" style="background:'+friendBg(f)+'">'+friendAvatar(f)+'</div>'
+      +'<div class="grow fr-tap" data-act="viewFriend" data-arg="'+esc(f.u)+'"><b>'+esc(prettyName(f.u))+'</b>'
+      +'<div class="muted tiny">@'+esc(f.u)+' · Level '+L+' · '+f.xp+' XP</div></div>'
+      +'<button class="btn ghost small" style="width:auto;padding:7px 11px" data-act="viewFriend" data-arg="'+esc(f.u)+'">View</button>'
+      +'<button class="icon-x" data-act="removeFriend" data-arg="'+esc(f.u)+'" title="Remove friend">✕</button>'
+      +'</div>';
+  });
+  return out;
+}
+function viewFriendProfile(){
+  var u=state.viewingFriend, f=null, i;
+  for(i=0;i<state.friends.length;i++){ if(state.friends[i].u===u){ f=state.friends[i]; break; } }
+  if(!f) return '<div class="pad stack"><span class="link" data-act="friendsBack">← Friends</span><div class="card center"><p class="muted">That friend isn\'t on your list anymore.</p></div></div>';
+  var L=levelFromXp(f.xp), mAcc=friendAcc(f,"math"), rAcc=friendAcc(f,"rw"), pred=friendPredicted(f);
+  var diff=state.xp-f.xp;
+  return '<div class="pad stack">'
+    +'<div class="between"><span class="link" data-act="friendsBack">← Friends</span><span class="link" data-act="removeFriend" data-arg="'+esc(u)+'" style="color:var(--bad)">Remove</span></div>'
+    +'<div class="card soft center"><div class="pavatar" style="background:'+friendBg(f)+';margin:0 auto;width:92px;height:92px;font-size:50px">'+friendAvatar(f)+'</div>'
+      +'<h2 style="margin-top:10px">'+esc(prettyName(u))+'</h2><div class="muted">@'+esc(u)+'</div>'
+      +'<div class="muted tiny" style="margin-top:3px">Level '+L+' · '+esc(levelTitle(L))+' · '+f.xp+' XP</div></div>'
+    +'<div class="stat-grid">'
+      +'<div class="stat"><div class="muted tiny">Climb progress</div><div class="big" style="color:var(--sun1)">'+pred+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">🔥 Current streak</div><div class="big">'+friendStreak(f)+'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="eyebrow">Accuracy by section</div>'
+      +'<div class="between" style="margin-top:10px"><span>🧮 Math</span><span class="mono">'+mAcc+'%</span></div><div class="bar good" style="margin-top:5px"><i style="width:'+mAcc+'%"></i></div>'
+      +'<div class="between" style="margin-top:12px"><span>📚 Reading &amp; Writing</span><span class="mono">'+rAcc+'%</span></div><div class="bar good" style="margin-top:5px"><i style="width:'+rAcc+'%"></i></div>'
+    +'</div>'
+    +'<div class="card between"><div><b>Head to head</b><div class="muted tiny">Total XP</div></div>'
+      +'<div style="text-align:right"><div class="mono" style="font-weight:800;font-size:18px">'+state.xp+' <span class="muted">vs</span> '+f.xp+'</div>'
+      +'<div class="tiny '+(diff>=0?"":"")+'" style="color:'+(diff>=0?"var(--good)":"var(--bad)")+'">'+(diff>=0?("You lead by "+diff):("Behind by "+(-diff)))+' XP</div></div></div>'
+    +'<button class="btn ghost small" data-act="removeFriend" data-arg="'+esc(u)+'">Remove friend</button>'
+    +'</div>';
+}
+
+/* ----- Tutor ----- */
+function viewTutor(){
+  var msgs=state.tutor.map(function(m,i){
+    if(m.who==="me") return '<div class="me-row"><button class="msg-del" data-act="delMsg" data-arg="'+i+'" title="Delete this message">✕</button><div class="msg me">'+m.text+'</div></div>';
+    return '<div class="msg bot">'+m.text+'</div>';
+  }).join("");
+  var sugg=["What should I study next?","How is the SAT scored?","Tips for the Math section","Explain my last miss"];
+  return '<div class="pad stack">'
+    +'<div class="between" style="align-items:flex-start">'
+      +'<div class="tutor-hero"><div class="tutor-ava">🧭</div>'
+        +'<div><div class="eyebrow">AI Tutor</div><h2 style="margin:0;line-height:1.05">Sherpa</h2>'
+        +'<div class="muted tiny" style="margin-top:3px">Ask about a concept, a strategy, or what to study next.</div></div></div>'
+      +(state.tutor.length>1?'<button class="btn ghost small" style="width:auto;padding:7px 11px;flex:none" data-act="clearTutor">Clear</button>':'')
+    +'</div>'
+    +'<div class="chatbox" style="margin-top:0"><div class="chat" id="chat">'+msgs+'</div>'
+    +'<div class="suggest">'+sugg.map(function(s){return '<span class="sg" data-act="tutorSug" data-arg="'+esc(s).replace(/"/g,"&quot;")+'">'+esc(s)+'</span>';}).join("")+'</div>'
+    +'<div class="composer"><input id="tutorInput" type="text" placeholder="Ask Sherpa anything…" autocomplete="off" data-enter="tutorSend"><button class="btn small" style="width:auto" data-act="tutorSend">Send</button></div></div>'
+    +'</div>';
+}
+function tutorSend(text){
+  text=(text||"").trim(); if(!text)return;
+  state.tutor.push({who:"me",text:esc(text)});
+  var reply=sherpa(text);
+  state.tutor.push({who:"bot",text:reply});
+  save(); render();
+}
+function sherpa(t){
+  var q=t.toLowerCase();
+  var weak=weakestSkill();
+  function has(){ for(var i=0;i<arguments.length;i++){ if(q.indexOf(arguments[i])>=0)return true; } return false; }
+  if(has("last","miss","explain that","why was","that question") && state.missed.length){
+    var mq=Q.find(function(x){return x.id===state.missed[0].id;});
+    if(mq) return "Sure — on that <b>"+esc(SKILLS[mq.skill].name)+"</b> question: "+nl(mq.exp)+" Want a similar one to try?";
+  }
+  if(has("study next","what should i","weak","improve","focus")){
+    return weak ? "Right now your lowest mastery is <b>"+esc(SKILLS[weak].name)+"</b> ("+Math.round(state.mastery[weak])+"%). I'd spend your next climb there — small, focused sets beat marathon cramming. Open the <b>Learn</b> tab and pick that module." : "Practice a module in the <b>Learn</b> tab and I'll spot your weakest skill from the results.";
+  }
+  if(has("scored","scoring","how is the sat","out of","1600")){
+    return "The digital SAT is scored <b>400–1600</b>: two sections, <b>Reading &amp; Writing</b> and <b>Math</b>, each 200–800, added together. It's <b>section-adaptive</b> — do well on the first module and the second gets harder, unlocking a higher score band.";
+  }
+  if(has("math") && !has("no ")){
+    return "The <b>Math</b> section is 44 questions across Algebra, Advanced Math, Problem-Solving &amp; Data, and Geometry &amp; Trig. A calculator is allowed on <b>every</b> question. Biggest wins: master linear equations and know when to just plug in the answer choices.";
+  }
+  if(has("reading","writing","grammar","english")){
+    return "<b>Reading &amp; Writing</b> is 54 short passages, one question each. For grammar, learn the comma/period boundary rules cold; for reading, always find textual evidence before you pick. Want a drill on transitions or punctuation?";
+  }
+  if(has("time","pacing","running out","too slow","fast")){
+    return "Pacing: R&amp;W gives you ~1.2 min/question, Math ~1.6 min. Answer easy ones first, <b>flag</b> the rest, and never leave a blank — there's no wrong-answer penalty. Take the <b>Full-Length Adaptive Test</b> to build the rhythm.";
+  }
+  if(has("nervous","anxious","stress","scared","worried","panic")){
+    return "Totally normal. Two things that help: (1) take real timed practice so test day feels familiar, and (2) a slow 4-count breath before each module. Your streak shows you're putting in the work — trust it. 💪";
+  }
+  if(has("quadratic","factor","parabola")){
+    return "For quadratics: try to <b>factor</b> first (find two numbers that multiply to the constant and add to the middle term). If it won't factor cleanly, use the quadratic formula. The sum of the roots is −b/a; the product is c/a — handy shortcuts.";
+  }
+  if(has("slope","linear")){
+    return "Slope = rise over run = (y₂ − y₁)/(x₂ − x₁). In y = mx + b, m is the slope and b is where the line crosses the y-axis. Parallel lines share a slope; perpendicular slopes are negative reciprocals.";
+  }
+  if(has("percent","discount")){
+    return "Percent tricks: 'of' means multiply, and a 25% discount means you pay 75%. Percent change = (new − old)/old × 100. Turn the percent into a decimal and it's just multiplication.";
+  }
+  if(has("comma","semicolon","punctuation","colon")){
+    return "Boundary rule of thumb: two complete sentences need a period or semicolon between them — a comma alone is a splice. Use a colon only after a complete sentence to introduce a list or explanation.";
+  }
+  if(has("transition","however","therefore")){
+    return "Transitions: match the logic. Contrast → however/nonetheless; cause → therefore/consequently; addition → moreover; example → for instance. Cover the transition, decide the relationship yourself, then pick the word that fits.";
+  }
+  if(has("hi","hey","hello","yo ","sup")){
+    return "Hey! Ready to climb? Ask me about any SAT topic, or tap a suggestion below. If you're not sure where to start, ask 'what should I study next?'";
+  }
+  if(has("thank")){ return "Anytime! Now go bag a summit. 🏔️"; }
+  return "Great question. I can break down any SAT concept (quadratics, commas, transitions, percentages…), give pacing and strategy tips, or tell you what to study next based on your mastery. Try one of the suggestions below, or ask about a specific topic.";
+}
+
+/* ----- Profile ----- */
+function viewProfile(){
+  var L=levelFromXp(state.xp), p=state.profile, ms=state.stats;
+  var mAcc=ms.sec.math.a?Math.round(ms.sec.math.c/ms.sec.math.a*100):0;
+  var rAcc=ms.sec.rw.a?Math.round(ms.sec.rw.c/ms.sec.rw.a*100):0;
+  var unlocked=Object.keys(state.achievements).length;
+  var out='<div class="pad stack">'
+    +'<div class="card soft"><div class="row">'
+      +'<div class="pavatar" style="background:'+avatarBg()+'">'+p.climber+'</div>'
+      +'<div class="grow"><b style="font-size:18px">'+(esc(p.name)||"Climber")+'</b> <span class="muted">@'+esc(p.username||"you")+'</span>'
+      +'<div class="muted tiny">Level '+L+' · '+esc(levelTitle(L))+' · '+state.xp+' XP</div></div>'
+      +'<button class="btn ghost small" data-act="openEditProfile">Edit</button></div></div>'
+    +'<div class="card"><div class="eyebrow">Your info</div>'
+      +'<div class="info-row"><span class="lbl">Starting number</span><span class="val">'+p.currentScore+'</span></div>'
+      +'<div class="info-row"><span class="lbl">Summit goal</span><span class="val" style="color:var(--sun1)">'+p.targetScore+'</span></div>'
+      +'<div class="info-row"><span class="lbl">Climb progress</span><span class="val">'+predictedScore()+'</span></div>'
+      +'<div class="info-row"><span class="lbl">Daily goal</span><span class="val">'+p.dailyGoal+' questions</span></div>'
+    +'</div>'
+    +'<div class="stat-grid">'
+      +'<div class="stat"><div class="muted tiny">🔥 Current streak</div><div class="big">'+state.streak.current+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Longest streak</div><div class="big">'+state.streak.longest+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Questions</div><div class="big">'+ms.totalQ+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Climb progress</div><div class="big" style="color:var(--sun1)">'+predictedScore()+'</div></div>'
+    +'</div>'
+    +'<div class="card"><div class="eyebrow">Accuracy by section</div>'
+      +'<div class="between" style="margin-top:10px"><span>🧮 Math</span><span class="mono">'+mAcc+'%</span></div><div class="bar good" style="margin-top:5px"><i style="width:'+mAcc+'%"></i></div>'
+      +'<div class="between" style="margin-top:12px"><span>📚 Reading &amp; Writing</span><span class="mono">'+rAcc+'%</span></div><div class="bar good" style="margin-top:5px"><i style="width:'+rAcc+'%"></i></div>'
+    +'</div>'
+    +'<div class="between"><h3>🏅 Achievements</h3><span class="muted tiny">'+unlocked+'/'+ACH.length+'</span></div>'
+    +'<div class="ach-grid">'+ACH.map(function(a){
+        var on=!!state.achievements[a.id];
+        return '<div class="ach '+(on?"":"lock")+'"><div class="em">'+(on?a.em:"🔒")+'</div><div><b class="tiny">'+a.name+'</b><small>'+a.desc+'</small></div></div>';
+      }).join("")+'</div>'
+    +'<button class="btn ghost small" data-act="openAccounts">👥 Switch or manage accounts</button>'
+    +'<button class="btn ghost small" data-act="install">📲 Install Ascend as an app</button>'
+    +'<button class="btn ghost small" data-act="signOut">Log out'+(curAcct()?' · @'+esc(curAcct().username):'')+'</button>'
+    +'<button class="btn ghost small" data-act="resetAll">Reset all progress</button>'
+    +'<div class="badge-note">Your account and climb progress sync securely across devices. We never store your password in this app.</div>'
+    +'</div>';
+  return out;
+}
+
+function viewEditProfile(){
+  var e=state.edit||state.profile;
+  var out='<div class="pad stack">'
+    +'<div class="between"><h2>Edit profile</h2><span class="link" data-act="cancelEdit">Cancel</span></div>'
+    +'<div class="card soft center"><div class="pavatar" style="background:'+AVATAR_BGS[(e.avatarBg||0)%AVATAR_BGS.length]+';margin:0 auto;width:90px;height:90px;font-size:48px">'+e.climber+'</div>'
+      +'<div class="muted tiny" style="margin-top:8px">'+(esc(e.name)||"Climber")+' · @'+esc(e.username||"you")+'</div></div>'
+    +'<div class="card"><div class="eyebrow">Choose an avatar</div>'
+      +'<div class="climber-pick" style="margin-top:10px">'+CLIMBERS.map(function(c){ return '<div class="cp '+(e.climber===c?"sel":"")+'" data-act="editAvatar" data-arg="'+c+'">'+c+'</div>'; }).join("")+'</div>'
+      +'<div class="eyebrow" style="margin-top:16px">Background</div>'
+      +'<div class="row" style="flex-wrap:wrap;gap:9px;margin-top:10px">'+AVATAR_BGS.map(function(g,i){ return '<div class="bg-sw '+(((e.avatarBg||0)===i)?"sel":"")+'" data-act="editBg" data-arg="'+i+'" style="background:'+g+'"></div>'; }).join("")+'</div>'
+    +'</div>'
+    +'<div class="card stack">'
+      +'<div class="field"><label>Name</label><input id="e_name" type="text" value="'+esc(e.name||"")+'" placeholder="Your name" autocomplete="off"></div>'
+      +'<div class="field"><label>Username <span class="muted tiny">(friends add you by this)</span></label><input id="e_user" type="text" value="'+esc(e.username||"")+'" placeholder="username" autocomplete="off"></div>'
+      +'<div class="field"><label>Email</label><input id="e_email" type="email" value="'+esc(e.email||"")+'" placeholder="you@email.com" autocomplete="email"></div>'
+      +'<div class="field"><label>Phone number</label><input id="e_phone" type="tel" value="'+esc(e.phone||"")+'" placeholder="(555) 123-4567" autocomplete="tel"></div>'
+      +'<div class="field"><label>Starting number · <span class="muted" id="e_cur_val">'+e.currentScore+'</span></label><input id="e_cur" type="range" min="400" max="1600" step="10" value="'+e.currentScore+'" style="width:100%" data-live="e_cur_val"></div>'
+      +'<div class="field"><label>Summit goal · <span class="muted" id="e_tgt_val">'+e.targetScore+'</span></label><input id="e_tgt" type="range" min="400" max="1600" step="10" value="'+e.targetScore+'" style="width:100%" data-live="e_tgt_val"></div>'
+      +'<div class="field"><label>Daily goal · <span class="muted" id="e_goal_val">'+e.dailyGoal+'</span> questions/day</label><input id="e_goal" type="range" min="5" max="50" step="5" value="'+e.dailyGoal+'" style="width:100%" data-live="e_goal_val"></div>'
+    +'</div>'
+    +'<button class="btn" data-act="saveProfile">Save changes</button>'
+    +'<button class="btn ghost small" data-act="cancelEdit">Cancel</button>'
+    +'</div>';
+  return out;
+}
+function captureEditForm(){
+  if(!state.edit)return; var e=state.edit;
+  var n=val("e_name"); if(n!=null)e.name=n;
+  var u=val("e_user"); if(u!=null)e.username=u;
+  var em=val("e_email"); if(em!=null)e.email=em;
+  var ph=val("e_phone"); if(ph!=null)e.phone=ph;
+  var c=val("e_cur"); if(c)e.currentScore=parseInt(c,10);
+  var g=val("e_tgt"); if(g)e.targetScore=parseInt(g,10);
+  var dg=val("e_goal"); if(dg)e.dailyGoal=parseInt(dg,10);
+}
+
+function viewAccounts(){
+  var a=acctsAll(), ids=Object.keys(a);
+  var out='<div class="pad stack">'
+    +'<div class="between" style="align-items:center"><span class="link" data-act="go" data-arg="profile">← Dashboard</span><h2 style="margin:0">Accounts</h2><span style="width:64px"></span></div>'
+    +'<p class="muted tiny">Accounts on this device — switch between them, add another, or remove one. (Stored locally for now.)</p>';
+  ids.forEach(function(uid){
+    var u=a[uid], cur=(uid===SESSION.uid), pr=(cur?state.profile:acctProfile(uid))||{};
+    var av=pr.climber||CLIMBERS[hashStr(u.username||uid)%CLIMBERS.length];
+    var bg=AVATAR_BGS[(pr.avatarBg!=null?pr.avatarBg:hashStr((u.username||uid)+"bg")%AVATAR_BGS.length)%AVATAR_BGS.length];
+    var contact=(u.email||u.phone||"")+(u.provider==="google"?(u.email?" · Google":"Google"):"");
+    out+='<div class="lb-row'+(cur?" me":"")+'">'
+      +'<div class="av em" style="background:'+bg+'">'+av+'</div>'
+      +'<div class="grow"><b>'+esc(u.username||"climber")+'</b>'+(cur?' <span class="muted tiny">· current</span>':'')
+      +'<div class="muted tiny">'+(esc(contact)||"no contact info yet")+'</div></div>'
+      +(cur?'':'<button class="btn ghost small" style="width:auto;padding:7px 12px" data-act="switchAccount" data-arg="'+uid+'">Switch</button>')
+      +'<button class="icon-x" data-act="removeAccount" data-arg="'+uid+'" title="Remove from device">✕</button>'
+      +'</div>';
+  });
+  out+='<button class="btn ghost" data-act="addAccount" style="margin-top:4px">＋ Add another account</button>'
+    +'<div class="badge-note">Switching keeps you signed in on this device. Removing an account deletes its saved progress here.</div>'
+    +'</div>';
+  return out;
+}
+
+/* ---------- Achievements engine ---------- */
+function unlock(id){
+  if(state.achievements[id])return;
+  var a=ACH.find(function(x){return x.id===id;}); if(!a)return;
+  state.achievements[id]=Date.now();
+  grantXP(a.xp);
+  toast(a.em,"Achievement unlocked!",a.name+" · +"+a.xp+" XP");
+}
+function checkAchievements(){
+  var ms=state.stats;
+  if(ms.maxCombo>=10)unlock("sharpshooter");
+  if(ms.totalQ>=100)unlock("centurion");
+  if(state.streak.current>=3)unlock("trailblazer");
+  if(state.streak.current>=7)unlock("week_warrior");
+  if(ms.sec.math.a>=20 && ms.sec.math.c/ms.sec.math.a>=0.9)unlock("math_master");
+  if(ms.sec.rw.a>=20 && ms.sec.rw.c/ms.sec.rw.a>=0.9)unlock("wordsmith");
+  var h=new Date().getHours();
+  if(h>=22||h<5)unlock("night_owl");
+  if(h>=5&&h<8)unlock("early_bird");
+}
+
+/* ---------- XP grant + level-up celebration ---------- */
+function grantXP(n){ var before=levelFromXp(state.xp); state.xp+=n; var after=levelFromXp(state.xp); if(after>before) celebrate("Level "+after+" — "+levelTitle(after),"You're climbing higher!"); }
+function celebrate(title,sub){
+  var o=document.createElement("div"); o.className="levelup"; var parts="";
+  if(!state.settings.reducedMotion){ var cols=["#FFC46B","#FF8A5B","#FF6BA0","#7C5CFF","#35D0A5"];
+    for(var i=0;i<16;i++){ var a=(i/16)*Math.PI*2; parts+='<span class="pc" style="--dx:'+(Math.cos(a)*100).toFixed(0)+'px;--dy:'+(Math.sin(a)*100).toFixed(0)+'px;--d:'+((i%5)*40)+'ms;background:'+cols[i%5]+'"></span>'; } }
+  o.innerHTML='<div class="lucard pop">'+parts+'<div style="font-size:38px">🎉</div><div class="eyebrow" style="color:var(--sun1)">LEVEL UP</div><h2 style="margin-top:2px">'+esc(title)+'</h2><div class="muted tiny">'+esc(sub)+'</div></div>';
+  document.body.appendChild(o);
+  setTimeout(function(){ o.style.transition="opacity .4s"; o.style.opacity="0"; setTimeout(function(){ if(o.parentNode)o.parentNode.removeChild(o); },400); },2000);
+}
+
+/* ---------- Full-length adaptive practice test (multistage / MST) ---------- */
+var MODN={rw:27, math:22};     // digital SAT module sizes: R&W 2×27=54 + Math 2×22=44 = 98 questions
+var MOD_MIN={rw:32, math:35};  // minutes per module on the real digital SAT
+function modCount(sec){ return MODN[sec]||27; }
+function modLimit(sec){ return (MOD_MIN[sec]||32)*60; }   // seconds allotted per module
+function tPool(sec){ return Q.filter(function(q){ return q.sec===sec; }); }
+function buildModule(sec,form,exclude){
+  var pool=tPool(sec).filter(function(q){ return exclude.indexOf(q.id)<0; }), chosen, need=modCount(sec);
+  if(form==="hard"){ var h=pool.filter(function(q){return q.diff>=3;}); chosen=shuffle(h.length>=need?h:pool); }
+  else if(form==="easy"){ var e=pool.filter(function(q){return q.diff<=3;}); chosen=shuffle(e.length>=need?e:pool); }
+  else { chosen=shuffle(pool); }
+  return chosen.slice(0,Math.min(need,chosen.length)).map(function(q){return q.id;});
+}
+function testCurQ(){ return Q.find(function(q){return q.id===state.test.queue[state.test.qi];}); }
+function startFullTest(){
+  state.test={ phase:"intro", sections:["rw","math"], si:0, section:"rw", module:1 };
+  stopTimer(); state.screen="test"; save(); render();
+}
+function beginTest(){
+  var q1=buildModule("rw","mixed",[]);
+  state.test={ sections:["rw","math"], si:0, section:"rw", module:1, form:"mixed", nextForm:null,
+    queue:q1, used:q1.slice(), qi:0, selected:null, modCorrect:0, moduleForms:{}, secScores:{},
+    answers:[], xp:0, start:Date.now(), modStart:Date.now(), phase:"question" };
+  stopTimer(); state.screen="test"; save(); render();
+}
+function timeUpModule(){
+  var t=state.test; if(!t)return;
+  for(var i=t.qi;i<t.queue.length;i++){ var q=Q.find(function(x){return x.id===t.queue[i];}); if(q) t.answers.push({id:q.id,given:null,correct:false,sec:q.sec}); }
+  stopTimer(); toast("⏰","Time's up","Module time expired — moving on."); finishModule();
+}
+function applyTestScoring(q,correct){
+  var st=state.stats; st.totalQ++; st.sec[q.sec].a++; if(correct)st.sec[q.sec].c++;
+  var gain;
+  if(correct){ state.mastery[q.skill]=clamp(mval(q.skill)+(q.diff>=4?7:5),0,100); gain=(XP_BASE[q.diff]||15); }
+  else { state.mastery[q.skill]=clamp(mval(q.skill)-4,0,100); gain=2; }
+  state.test.xp+=gain; grantXP(gain);
+}
+function testNext(){
+  var t=state.test, q=testCurQ();
+  var given = q.type==="grid" ? (val("tgrid")||"").trim() : t.selected;
+  if(q.type!=="grid" && given==null) return;            // MC requires a selection
+  var correct = q.type==="grid" ? ((q.accept||[q.correct]).indexOf(String(given).trim())>=0) : (given===q.correct);
+  t.answers.push({id:q.id,given:given,correct:correct,sec:q.sec});
+  if(correct) t.modCorrect++;
+  applyTestScoring(q,correct);
+  if(!correct && !state.missed.some(function(m){return m.id===q.id;})) state.missed.unshift({id:q.id,when:Date.now()});
+  t.selected=null; t.qi++;
+  if(t.qi<t.queue.length){ save(); render(); return; }
+  finishModule();
+}
+function finishModule(){
+  var t=state.test;
+  if(t.module===1){
+    var acc1=t.queue.length? t.modCorrect/t.queue.length : 0;
+    t.nextForm = acc1>=0.6 ? "hard" : "easy";   // module-2 form set by module-1 performance
+    t.moduleForms[t.section]=t.nextForm;
+    t.phase="modInterstitial"; stopTimer(); save(); render();
+  } else { scoreSection(); }
+}
+function scoreSection(){
+  var t=state.test;
+  var ans=t.answers.filter(function(a){return a.sec===t.section;});
+  var total=ans.length, correct=ans.filter(function(a){return a.correct;}).length;
+  var upper=t.moduleForms[t.section]==="hard", acc=total?correct/total:0;
+  var base=upper?500:200, span=upper?300:390;                 // module path sets the attainable band
+  var score=clamp(Math.round((base+acc*span)/10)*10,200,800);
+  t.secScores[t.section]={score:score,correct:correct,total:total,upper:upper};
+  if(t.si<t.sections.length-1){ t.phase="secInterstitial"; stopTimer(); save(); render(); }
+  else finishTest();
+}
+function testContinue(){
+  var t=state.test;
+  if(t.phase==="modInterstitial"){
+    t.module=2; t.form=t.nextForm; t.modCorrect=0;
+    t.queue=buildModule(t.section,t.form,t.used); t.used=t.used.concat(t.queue);
+    t.qi=0; t.selected=null; t.modStart=Date.now(); t.phase="question"; save(); render();
+  } else if(t.phase==="secInterstitial"){
+    t.si++; t.section=t.sections[t.si]; t.module=1; t.form="mixed"; t.modCorrect=0;
+    t.queue=buildModule(t.section,"mixed",[]); t.used=t.queue.slice();
+    t.qi=0; t.selected=null; t.modStart=Date.now(); t.phase="question"; save(); render();
+  }
+}
+function finishTest(){
+  var t=state.test; stopTimer();
+  bumpStreak(); markToday(); state.stats.sessions++;
+  unlock("first_ascent"); unlock("summit_test"); checkAchievements();
+  var rw=t.secScores.rw, mm=t.secScores.math;
+  state.lastTest={ rw:rw, math:mm, total:clamp(rw.score+mm.score,400,1600), xp:t.xp,
+    secs:Math.round((Date.now()-t.start)/1000) };
+  state.test=null; state.screen="testresults"; save(); render();
+}
+function fmtClock(s){ s=Math.max(0,s); return ("0"+Math.floor(s/60)).slice(-2)+":"+("0"+(s%60)).slice(-2); }
+function startTestTimer(){ stopTimer(); timerH=setInterval(function(){
+    if(!state.test){ stopTimer(); return; }
+    var rem=modLimit(state.test.section)-Math.floor((Date.now()-(state.test.modStart||state.test.start))/1000);
+    var el=document.getElementById("testTimer");
+    if(rem<=0){ if(el)el.textContent="00:00"; timeUpModule(); return; }
+    if(el){ el.textContent=fmtClock(rem); el.style.color = rem<=300 ? "var(--bad)" : ""; }
+  },1000); }
+
+function viewTest(){
+  var t=state.test;
+  if(t.phase==="intro"){
+    return '<div class="pad stack center" style="min-height:90vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+      +'<div style="font-size:44px">🧭</div><div class="eyebrow" style="color:var(--sun1)">Full-length practice test</div>'
+      +'<h1 style="margin-top:2px">98 questions · about 2 hr 14 min</h1>'
+      +'<p class="muted">A complete digital-SAT simulation. Each section has two adaptive modules — your first-module performance sets the difficulty and score band of the second, just like Bluebook.</p>'
+      +'<div class="card soft" style="text-align:left"><div class="stack" style="gap:9px">'
+        +'<div class="between"><span>📚 Reading &amp; Writing</span><span class="mono tiny muted">2 × 27 Q · 32 min each</span></div>'
+        +'<div class="divline"></div>'
+        +'<div class="between"><span>🧮 Math</span><span class="mono tiny muted">2 × 22 Q · 35 min each</span></div>'
+      +'</div></div>'
+      +'<p class="tiny muted">Each module is timed; when the clock runs out it submits automatically. Set aside uninterrupted time for a more useful unofficial practice.</p>'
+      +'<button class="btn" data-act="beginTest" style="margin-top:6px">Start the test →</button>'
+      +'<button class="btn ghost small" data-act="quitTest">Not now</button></div>';
+  }
+  if(t.phase==="modInterstitial"){
+    var hard=t.nextForm==="hard";
+    return '<div class="pad stack center" style="min-height:88vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+      +'<div style="font-size:48px">'+(hard?"🔼":"✓")+'</div>'
+      +'<h1>'+(hard?"Strong first module!":"Module 1 complete")+'</h1>'
+      +'<p class="muted">'+(hard?"You\'ve unlocked the higher-scoring second module — how you do here can push your section score above the standard band.":"On to your second module. Your first-module performance chose which version you get, just like the real test.")+'</p>'
+      +'<div class="card soft"><div class="tiny muted">'+SECTIONS[t.section].name+' · Module 2 of 2 · '+modCount(t.section)+' questions · '+MOD_MIN[t.section]+' min</div></div>'
+      +'<button class="btn" data-act="testContinue" style="margin-top:14px">Start Module 2 →</button></div>';
+  }
+  if(t.phase==="secInterstitial"){
+    var done=SECTIONS[t.section].name, nxt=SECTIONS[t.sections[t.si+1]].name;
+    return '<div class="pad stack center" style="min-height:88vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+      +'<div style="font-size:48px">✅</div><h1>'+done+' complete</h1>'
+      +'<p class="muted">Nice work. Up next: <b>'+nxt+'</b> — two more adaptive modules.</p>'
+      +'<button class="btn" data-act="testContinue" style="margin-top:14px">Continue →</button></div>';
+  }
+  var q=testCurQ(), pct=Math.round(t.qi/t.queue.length*100);
+  var rem0=modLimit(t.section)-Math.floor((Date.now()-(t.modStart||t.start))/1000);
+  var head='<div class="qtop"><span class="link" data-act="quitTest">✕ Exit</span>'
+    +'<span class="tiny muted">'+SECTIONS[t.section].name+' · Mod '+t.module+'/2 · '+(t.qi+1)+'/'+t.queue.length+'</span>'
+    +'<span class="mono combo" id="testTimer"'+(rem0<=300?' style="color:var(--bad)"':'')+'>'+fmtClock(rem0)+'</span></div><div class="qbar"><i style="width:'+pct+'%"></i></div>';
+  var body='<div class="pad stack">'+(q.passage?'<div class="passage">'+nl(q.passage)+'</div>':'')+'<div class="stem">'+nl(q.stem)+'</div>';
+  if(q.type==="grid"){
+    body+='<div class="field"><label class="muted tiny">Enter your answer</label><input id="tgrid" type="text" inputmode="decimal" placeholder="Type a number" autocomplete="off" data-enter="testNext"></div>';
+  } else {
+    body+='<div class="stack" style="gap:10px">'+q.options.map(function(o){
+      return '<button class="opt'+(t.selected===o.k?" pick":"")+'" data-act="testPick" data-arg="'+o.k+'"><span class="key">'+o.k+'</span><span>'+nl(o.t)+'</span></button>';
+    }).join("")+'</div>';
+  }
+  var last=(t.qi>=t.queue.length-1 && t.module===2 && t.si>=t.sections.length-1);
+  var canNext=(q.type==="grid" || t.selected!=null);
+  body+='<button class="btn" data-act="testNext"'+(canNext?"":" disabled")+'>'+(last?"Finish test →":"Next →")+'</button></div>';
+  return '<div style="display:flex;flex-direction:column;min-height:100vh;max-width:600px;margin:0 auto">'+head+'<div class="screen">'+body+'</div></div>';
+}
+function viewTestResults(){
+  var r=state.lastTest, p=state.profile, delta=r.total-p.currentScore;
+  function band(s){ return s.upper?"higher band":"standard band"; }
+  return '<div class="pad stack center" style="min-height:88vh;max-width:600px;margin:0 auto;display:flex;flex-direction:column;justify-content:center">'
+    +'<div style="font-size:44px">🧭</div><div class="eyebrow" style="color:var(--sun1)">Full-length adaptive test</div>'
+    +'<div class="mono" style="font-size:52px;font-weight:800;color:var(--sun1);line-height:1.05">'+r.total+'</div>'
+    +'<div class="muted tiny">unofficial practice total · out of 1600</div>'
+    +'<div class="stat-grid" style="margin-top:8px">'
+      +'<div class="stat"><div class="muted tiny">Reading &amp; Writing</div><div class="big">'+r.rw.score+'</div><div class="tiny muted">'+r.rw.correct+'/'+r.rw.total+' · '+band(r.rw)+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Math</div><div class="big">'+r.math.score+'</div><div class="tiny muted">'+r.math.correct+'/'+r.math.total+' · '+band(r.math)+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">vs your start</div><div class="big" style="color:'+(delta>=0?"var(--good)":"var(--bad)")+'">'+(delta>=0?"+":"")+delta+'</div></div>'
+      +'<div class="stat"><div class="muted tiny">Time · XP</div><div class="big">'+Math.floor(r.secs/60)+'m</div><div class="tiny muted">+'+r.xp+' XP</div></div>'
+    +'</div>'
+    +'<div class="badge-note" style="margin-top:8px">This is an unofficial practice total. Take Bluebook™ before test day. The four-module layout (R&amp;W 27+27, Math 22+22) is shaped like the Digital SAT® exam; it is not an official score.</div>'
+    +'<div class="stack" style="margin-top:12px">'
+      +(state.missed.length?'<button class="btn ghost small" data-act="go" data-arg="review">📓 Review missed questions</button>':'')
+      +'<button class="btn" data-act="go" data-arg="home">Back to mountain</button>'
+      +resourcesCard(true)
+    +'</div></div>';
+}
+
+/* ---------- Lessons: learn -> quiz -> mastery ---------- */
+function lessonFor(skill){ for(var i=0;i<LESSONS.length;i++){ if(LESSONS[i].skill===skill) return LESSONS[i]; } return null; }
+function moduleSkills(sec,dom){ return Object.keys(SKILLS).filter(function(k){ return SKILLS[k].sec===sec && SKILLS[k].dom===dom && lessonFor(k); }); }
+function viewLearn(){
+  var totalMods=Object.keys(SKILLS).filter(function(x){return lessonFor(x);}).length, mc=masteredCount(), mPct=totalMods?Math.round(mc/totalMods*100):0;
+  var out='<div class="pad stack"><div class="eyebrow">Learn &amp; Practice</div><h2>Study by module</h2>'
+    +'<div class="learn-hero"><div class="between" style="gap:14px"><div>'
+      +'<div class="tiny" style="color:var(--sun1);font-weight:800;letter-spacing:.05em">READ · THEN MASTER</div>'
+      +'<div style="font-size:14.5px;margin-top:4px;color:#e8ecff;line-height:1.45">Read the lesson, then score <b>10/10</b> on the quiz to <b>master</b> a skill. Track every skill in the <b>Progress</b> tab.</div></div>'
+      +'<div class="ring" data-v="'+mc+'/'+totalMods+'" style="--p:'+mPct+'"></div></div></div>';
+  ["math","rw"].forEach(function(sec){
+    var S=SECTIONS[sec], glow=(sec==="math"?"rgba(92,200,255,.16)":"rgba(255,107,160,.16)");
+    out+='<div class="sec-band"><div class="sico" style="background:'+glow+'">'+S.ico+'</div><b>'+S.name+'</b>'
+      +'<span class="count-chip" style="margin-left:auto">'+sectionMastery(sec)+'% mastery</span></div>';
+    S.domains.forEach(function(dom){
+      var mods=moduleSkills(sec,dom); if(!mods.length) return;
+      out+='<div class="dom-label">'+dom+'</div>';
+      mods.forEach(function(k){
+        var L=lessonFor(k), cnt=(QBY[k]||[]).length, mastered=!!(state.mastered&&state.mastered[k]);
+        out+='<div class="mod" data-act="openLesson" data-arg="'+k+'">'
+          +'<div class="mico" style="background:'+glow+'">'+SKILLS[k].ico+'</div>'
+          +'<div class="mmeta"><div class="between"><b>'+esc(SKILLS[k].name)+'</b>'+(mastered?'<span class="mastered-pill">🏅 Mastered</span>':'')+'</div>'
+          +'<div class="muted tiny" style="margin-top:1px">'+esc(L?L.one:"")+'</div>'
+          +'<div class="tiny muted" style="margin-top:6px">'+(mastered?'<span style="color:var(--good)">✓ Mastered</span>':cnt+' questions · score 10/10 to master')+'</div></div>'
+          +'<span class="mchev">›</span></div>';
+      });
+    });
+  });
+  out+='<div class="badge-note">Master a skill by scoring 10/10 on its quiz. Missed questions go to your Review list with a full explanation.</div></div>';
+  return out;
+}
+function viewProgress(){   // every skill's mastery level (0–100%), earned through Learn + Quiz Lab
+  var om=Math.round(overallMastery()), mc=masteredCount(),
+      totalMods=Object.keys(SKILLS).filter(function(x){return lessonFor(x);}).length;
+  var out='<div class="pad stack"><div class="eyebrow">Your climb</div><h2>Progress</h2>'
+    +'<div class="learn-hero"><div class="between" style="gap:14px"><div>'
+      +'<div class="tiny" style="color:var(--sun1);font-weight:800;letter-spacing:.05em">SKILL MASTERY</div>'
+      +'<div style="font-size:14.5px;margin-top:4px;color:#e8ecff;line-height:1.45">Every skill starts at <b>0%</b>. Practice questions in <b>Learn</b> and <b>Quiz Lab</b> raise its mastery — a perfect 10/10 module quiz marks it <b>🏅 mastered</b>.</div>'
+      +'<div class="tiny muted" style="margin-top:8px">🏅 '+mc+' of '+totalMods+' skills mastered · '+om+'% overall</div></div>'
+      +'<div class="ring" data-v="'+om+'%" style="--p:'+om+'"></div></div></div>';
+  ["math","rw"].forEach(function(sec){
+    var S=SECTIONS[sec], glow=(sec==="math"?"rgba(92,200,255,.16)":"rgba(255,107,160,.16)");
+    out+='<div class="sec-band"><div class="sico" style="background:'+glow+'">'+S.ico+'</div><b>'+S.name+'</b>'
+      +'<span class="count-chip" style="margin-left:auto">'+sectionMastery(sec)+'% avg</span></div>';
+    S.domains.forEach(function(dom){
+      var mods=Object.keys(SKILLS).filter(function(k){ return SKILLS[k].sec===sec && SKILLS[k].dom===dom; });
+      if(!mods.length) return;
+      out+='<div class="dom-label">'+esc(dom)+'</div>';
+      mods.forEach(function(k){
+        var pct=Math.round(mval(k)), mastered=!!(state.mastered&&state.mastered[k]);
+        out+='<div class="prog-row"><div class="prog-ico" style="background:'+glow+'">'+SKILLS[k].ico+'</div>'
+          +'<div class="prog-meta"><div class="between"><b>'+esc(SKILLS[k].name)+'</b>'
+            +(mastered?'<span class="mastered-pill">🏅 Mastered</span>':'<span class="mono tiny" style="font-weight:800;color:'+(pct>0?"var(--sun1)":"var(--faint)")+'">'+pct+'%</span>')+'</div>'
+          +'<div class="bar'+(mastered?" good":"")+'" style="margin-top:9px"><i style="width:'+pct+'%"></i></div></div></div>';
+      });
+    });
+  });
+  out+='<div class="badge-note">Mastery climbs with every correct answer in Learn and Quiz Lab, and dips a little on a miss. Score 10/10 on a module quiz to fill a skill to 100%.</div></div>';
+  return out;
+}
+function viewLesson(){   // combined module page: lesson + practice entry
+  var k=state.navSkill, sk=SKILLS[k], L=lessonFor(k);
+  if(!sk||!L) return '<div class="pad stack"><span class="link" data-act="go" data-arg="learn">← All modules</span><div class="card center"><p class="muted">Module not found.</p></div></div>';
+  var cnt=(QBY[k]||[]).length, glow=(sk.sec==="math"?"rgba(92,200,255,.16)":"rgba(255,107,160,.16)"), mastered=!!(state.mastered&&state.mastered[k]);
+  var body=L.blocks.map(function(b){
+    var h=b.h?'<div class="dom-label" style="color:var(--sun1);margin-top:12px">'+esc(b.h)+'</div>':'';
+    if(b.list) return h+'<ul class="lesson-ul">'+b.list.map(function(x){return '<li>'+nl(x)+'</li>';}).join("")+'</ul>';
+    return h+'<p>'+nl(b.p)+'</p>';
+  }).join("");
+  return '<div class="pad stack"><span class="link" data-act="go" data-arg="learn">← All modules</span>'
+    +'<div class="row" style="gap:13px;align-items:center"><div class="mico" style="width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:26px;flex-shrink:0;background:'+glow+'">'+sk.ico+'</div>'
+      +'<div><h2 style="margin:0">'+esc(sk.name)+'</h2><div class="muted tiny">'+esc(sk.dom)+' · '+cnt+' practice questions</div></div></div>'
+    +'<div class="card soft">'+(mastered
+        ? '<div class="between"><span style="color:var(--good);font-weight:700">🏅 Mastered</span><span class="muted tiny">Bar filled to 100% in Progress</span></div>'
+        : '<div class="between"><span class="muted tiny">Not yet mastered</span><span class="mono tiny" style="color:var(--sun1);font-weight:800">Goal: 10 / 10</span></div><div class="muted tiny" style="margin-top:6px">Score a perfect 10/10 on the quiz to master this skill.</div>')
+    +'</div>'
+    +'<div class="dom-label" style="margin-top:6px;color:var(--accent2)">📖 The lesson</div>'
+    +'<div class="card stack" style="gap:3px"><div class="muted" style="margin-bottom:2px">'+esc(L.one)+'</div>'+body+'</div>'
+    +'<div class="dom-label" style="margin-top:6px;color:var(--sun2)">✍️ Practice quiz</div>'
+    +'<div class="card soft"><p class="muted tiny" style="margin:0 0 11px">'+(mastered
+        ? 'You\'ve mastered this skill. Retake the quiz anytime to keep it sharp.'
+        : 'Answer all 10 correctly to <b style="color:var(--good)">master this skill</b>. You\'ll see the answer and a full explanation after each question.')+'</p>'
+    +'<button class="btn" data-act="practiceModule" data-arg="'+k+'">'+(mastered?'Retake the 10-question quiz':'Start the 10-question quiz')+' →</button></div>'
+    +'</div>';
+}
+
+/* ================= ACTIONS ================= */
+var ACTIONS={
+  go:function(scr){ if(scr==="home")initMastery(state); state.screen=scr; save(); render(); },
+  authMode:function(m){ authMode=m; authErr=""; authVals={}; render(); },
+  togglePw:function(id,_,btn){ var el=document.getElementById(id); if(!el)return; if(el.type!=="text"){ el.type="text"; if(btn)btn.textContent="Hide"; } else { el.type="password"; if(btn)btn.textContent="Show"; } },
+  doSignIn:function(){ authVals={id:val("au_id")}; if(!cloudReady()){ authErr=cloudError(); render(); return; }
+    supabaseClient.auth.signInWithPassword({email:(val("au_id")||"").trim(),password:val("au_pw")||""}).then(function(r){
+      if(r.error){ authErr=r.error.message; render(); return; }
+      authErr=""; authVals={}; startCloudSession(r.data.user);
+    }); },
+  pickCred:function(id){ var c=credLookup(id), e=document.getElementById("au_id"), p=document.getElementById("au_pw");
+    if(e)e.value=id; if(p&&c)p.value=c.pw; if(e)e.blur(); },
+  doSignUp:function(){ var idv=(val("au_email")||"").trim(), isEmail=idv.indexOf("@")>=0, ageEl=document.getElementById("au_age");
+    authVals={user:val("au_user"), email:idv, age:!!(ageEl&&ageEl.checked)};
+    if(!authVals.age){ authErr="Please confirm you are 13 or older to create an account."; render(); return; }
+    if((val("au_pw")||"")!==(val("au_pw2")||"")){ authErr="Those passwords don't match — please re-enter them."; render(); return; }
+    if(!cloudReady()){ authErr=cloudError(); render(); return; }
+    if(!isEmail){ authErr="Please use an email address for your hosted account."; render(); return; }
+    if(!/^[A-Za-z0-9_.]{2,20}$/.test(val("au_user")||"")){ authErr="Username can use letters, numbers, . and _ (2–20 characters)."; render(); return; }
+    supabaseClient.auth.signUp({email:idv,password:val("au_pw")||"",options:{emailRedirectTo:location.origin+location.pathname,data:{username:val("au_user").trim()}}}).then(function(r){
+      if(r.error){ authErr=r.error.message; render(); return; }
+      authErr=""; authVals={};
+      if(r.data.session) startCloudSession(r.data.user);
+      else { authErr="Check your email to confirm your account, then sign in."; authMode="signin"; render(); }
+    }); },
+  doGoogle:function(){ if(authMode==="signup"){ var ageEl=document.getElementById("au_age"); authVals=authVals||{}; authVals.age=!!(ageEl&&ageEl.checked); authVals.user=val("au_user"); authVals.email=val("au_email");
+      if(!authVals.age){ authErr="Please confirm you are 13 or older to create an account."; render(); return; } }
+    if(!cloudReady()){ authErr=cloudError(); render(); return; }
+    supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}}).then(function(r){ if(r.error){ authErr=r.error.message; render(); } }); },
+  signOut:function(){ if(!confirm("Log out of Ascend? Your progress will remain securely saved."))return;
+    if(cloudReady()) supabaseClient.auth.signOut(); clearSession(); state=defaultState(); render(); },
+  openAccounts:function(){ state.screen="accounts"; save(); render(); },
+  switchAccount:function(uid){ if(!uid||uid===SESSION.uid)return; setSession(uid); bootUser(); var ac=curAcct(); toast("🔄","Switched account",ac?("Now signed in as @"+ac.username):""); },
+  addAccount:function(){ clearSession(); authMode="signup"; authErr=""; authVals={}; render(); },
+  removeAccount:function(uid){ var a=acctsAll(), u=a[uid]; if(!u)return;
+    if(!confirm("Remove @"+u.username+" from this device? Its saved progress here will be deleted."))return;
+    delete a[uid]; acctsSave(a); lsDel("ascend_u_"+uid);
+    if(uid===SESSION.uid){ clearSession(); state=defaultState(); render(); } else render(); },
+  install:function(){ if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(function(){ deferredPrompt=null; }); }
+    else { toast("📲","Install Ascend","Open your browser menu and choose “Install app” or “Add to Home Screen.” (Available when Ascend is served over http/https, e.g. hosted or via the local server.)"); } },
+  onbNext:function(){
+    var p=state.profile, st=state.onbStep;
+    if(st===0){ var n=val("i_name"),u=val("i_user"); if(n)p.name=n.trim(); p.username=(u||"").trim()||slug(p.name)||"climber"+(hashStr(p.name||"x")%99); }
+    if(st===1){ p.currentScore=parseInt(val("i_cur")||p.currentScore,10); }
+    if(st===2){ p.targetScore=parseInt(val("i_tgt")||p.targetScore,10); if(p.targetScore<p.currentScore)p.targetScore=Math.min(1600,p.currentScore+50); }
+    if(st>=4){ initMastery(state); state.screen="home"; state.onbStep=0; save(); render(); toast("⛰️","Your climb begins!","Summit set to "+p.targetScore); return; }
+    state.onbStep++; save(); render();
+  },
+  onbBack:function(){ if(state.onbStep>0)state.onbStep--; save(); render(); },
+  goal:function(g){ state.profile.dailyGoal=parseInt(g,10); save(); render(); },
+  climber:function(c){ state.profile.climber=c; save(); render(); },
+  openEditProfile:function(){ var a=curAcct()||{}; state.edit=JSON.parse(JSON.stringify(state.profile)); state.edit.email=a.email||""; state.edit.phone=a.phone||""; if(a.name && !state.edit.name)state.edit.name=a.name; state.screen="editprofile"; save(); render(); },
+  editAvatar:function(c){ captureEditForm(); state.edit.climber=c; render(); },
+  editBg:function(i){ captureEditForm(); state.edit.avatarBg=parseInt(i,10)||0; render(); },
+  cancelEdit:function(){ state.edit=null; state.screen="profile"; render(); },
+  saveProfile:function(){ captureEditForm(); var e=state.edit||{};
+    e.name=(e.name||"").trim();
+    var uname=(e.username||"").trim()||state.profile.username;
+    var r=updateAccount({username:uname, name:e.name, email:e.email, phone:e.phone});
+    if(r.err){ toast("⚠️","Couldn't save",r.err); render(); return; }   // stay on the edit screen
+    e.username=r.username; delete e.email; delete e.phone;              // contact lives on the account, not the game profile
+    state.profile=Object.assign(state.profile,e); state.edit=null; state.screen="profile"; save(); render();
+    toast("✅","Profile saved","Your changes are in."); },
+  openLesson:function(sk){ state.navSkill=sk; state.screen="lesson"; save(); render(); },
+  practiceModule:function(sk){ startSession({mode:"module",skill:sk,size:Math.min(10,(QBY[sk]||[]).length)||1}); },
+  genSec:function(sec){ state.genSetup.sec=sec; var l=genSkillsFor(sec); if(l.indexOf(state.genSetup.skill)<0)state.genSetup.skill=l[0]; save(); render(); },
+  genSkill:function(sk){ state.genSetup.skill=sk; save(); render(); },
+  genCount:function(n){ state.genSetup.count=parseInt(n,10)||10; save(); render(); },
+  genGo:function(){ startGenSession(state.genSetup.skill, state.genSetup.count); },
+  genAgain:function(){ var r=state.lastResult; if(r&&r.genReq) startGenSession(r.genReq.skill, r.genReq.count); },
+  startFullTest:function(){ startFullTest(); },
+  beginTest:function(){ beginTest(); },
+  testPick:function(k){ if(state.test){ state.test.selected=k; save(); render(); } },
+  testNext:function(){ testNext(); },
+  testContinue:function(){ testContinue(); },
+  quitTest:function(){ if(confirm("Exit the test? Progress on this test will be lost.")){ stopTimer(); state.test=null; state.screen="home"; save(); render(); } },
+  startSkill:function(k){ startSession({mode:"skill",skill:k,size:Math.min(10,(QBY[k]||[]).length)||1}); },
+  answer:function(k){ if(!state.session.answered)gradeAnswer(k); },
+  submitGrid:function(){ if(state.session.answered)return; var v=val("gridin"); if(v==null||v==="")return; gradeAnswer(v); },
+  nextQ:function(){ var s=state.session; if(s.i>=s.queue.length-1){ finishSession(); } else { s.i++; s.answered=false; s.selected=null; save(); render(); } },
+  quitSession:function(){ stopTimer(); state.session=null; state.screen="home"; save(); render(); },
+  askTutorQ:function(){ var q=curQ(); state.tutor.push({who:"me",text:"Explain this question"});
+    state.tutor.push({who:"bot",text:"On this <b>"+esc(SKILLS[q.skill].name)+"</b> item: "+nl(q.exp)}); state.screen="tutor"; save(); render(); },
+  retryOne:function(id){ var q=Q.find(function(x){return x.id===id;}); if(!q)return; state.session={mode:"retry",queue:[id],i:0,answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:false,start:Date.now()}; state.screen="session"; save(); render(); },
+  clearMiss:function(id){ state.missed=state.missed.filter(function(m){return m.id!==id;}); save(); render(); },
+  addFriend:function(){ var u=(val("friendInput")||"").trim().replace(/^@/,""); if(!u)return;
+    if(u.toLowerCase()===(state.profile.username||"").toLowerCase()){ toast("🙂","That's you!","Add a friend's username."); return; }
+    if(state.friends.some(function(f){return f.u.toLowerCase()===u.toLowerCase();})){ toast("👍","Already added",u); return; }
+    var xp=60+(hashStr(u)%420); state.friends.push({u:u,xp:xp}); unlock("friendly"); state.friendsTab="list"; toast("🤝","Friend added","@"+u+" joined your rope team"); save(); render(); },
+  friendsTab:function(w){ state.friendsTab=w; save(); render(); },
+  viewFriend:function(u){ state.viewingFriend=u; state.screen="friendprofile"; save(); render(); },
+  friendsBack:function(){ state.viewingFriend=null; state.friendsTab="list"; state.screen="friends"; render(); },
+  removeFriend:function(u){ if(!confirm("Remove @"+u+" from your friends?"))return;
+    state.friends=state.friends.filter(function(f){return f.u!==u;});
+    state.viewingFriend=null; state.friendsTab="list"; state.screen="friends"; save(); render();
+    toast("👋","Friend removed","@"+u+" left your rope team"); },
+  tutorSend:function(){ tutorSend(val("tutorInput")); },
+  tutorSug:function(s){ tutorSend(s); },
+  delMsg:function(i){ i=parseInt(i,10); var t=state.tutor; if(isNaN(i)||!t[i]||t[i].who!=="me")return;
+    var n=(t[i+1]&&t[i+1].who==="bot")?2:1; t.splice(i,n); save(); render(); },   // removes your message and Sherpa's reply to it
+  clearTutor:function(){ if(!confirm("Clear the whole conversation with Sherpa?"))return; state.tutor=[defaultState().tutor[0]]; save(); render(); },
+  resetAll:function(){ if(confirm("Reset all progress and start over?")){ state=defaultState(); save(); render(); } }
+};
+function val(id){ var el=document.getElementById(id); return el?el.value:null; }
+function slug(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,14); }
+
+/* ================= WIRING ================= */
+var app=document.getElementById("app");
+app.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act]"); if(!t)return;
+  if(t.tagName==="INPUT")return;
+  var fn=ACTIONS[t.dataset.act];
+  if(fn){ e.preventDefault(); fn(t.dataset.arg, t.dataset.arg2, t); }
+});
+app.addEventListener("keydown",function(e){
+  if(e.key!=="Enter")return;
+  var t=e.target.closest("[data-enter]"); if(!t)return;
+  e.preventDefault(); var fn=ACTIONS[t.dataset.enter]; if(fn)fn();
+});
+app.addEventListener("input",function(e){
+  var t=e.target; if(t.dataset&&t.dataset.live){ var out=document.getElementById(t.dataset.live); if(out)out.textContent=t.value; }
+});
+app.addEventListener("change",function(e){
+  var t=e.target.closest("[data-act]"); if(!t||t.type!=="checkbox")return;
+  var fn=ACTIONS[t.dataset.act]; if(fn)fn(t.dataset.arg,t.dataset.arg2,t);
+});
+
+function pwField(id, ph, enter, ac, preset){
+  return '<div class="pw-wrap"><input id="'+id+'" type="password" value="'+esc(preset||"")+'" placeholder="'+ph+'" autocomplete="'+ac+'" data-enter="'+enter+'">'
+    +'<button type="button" class="pw-toggle" data-act="togglePw" data-arg="'+id+'">Show</button></div>';
+}
+function viewAuth(){
+  var signup=authMode==="signup", V=authVals||{}, creds=[];
+  return '<div class="auth-wrap"><div class="auth-card">'
+    +'<div class="auth-logo">🏔️</div>'
+    +'<h1 class="auth-title">Ascend</h1>'
+    +'<p class="auth-sub">'+(signup?"Create your account and start your climb.":"Welcome back — sign in to keep climbing.")+'</p>'
+    +(authErr?'<div class="auth-err">'+esc(authErr)+'</div>':'')
+    +'<button class="gbtn" data-act="doGoogle"><span class="gicon">G</span> Continue with Google</button>'
+    +'<div class="auth-or"><span>or</span></div>'
+    +(signup
+      ? '<div class="field"><label>Username</label><input id="au_user" type="text" value="'+esc(V.user||"")+'" placeholder="e.g. trailrunner22" autocomplete="username"></div>'
+        +'<div class="field"><label>Email or phone number</label><input id="au_email" type="text" value="'+esc(V.email||"")+'" placeholder="you@email.com  or  (555) 123-4567" autocomplete="email"></div>'
+        +'<div class="field"><label>Password</label>'+pwField("au_pw","At least 6 characters","doSignUp","new-password")+'</div>'
+        +'<div class="field"><label>Confirm password</label>'+pwField("au_pw2","Re-enter your password","doSignUp","new-password")+'</div>'
+        +'<div class="age-gate"><p>Ascend is for students 13 and older.</p>'
+        +'<label class="age-check"><input id="au_age" type="checkbox"'+(V.age?" checked":"")+'> I confirm I am 13 or older.</label></div>'
+        +'<button class="btn" data-act="doSignUp">Create account</button>'
+        +'<p class="auth-switch">Already have an account? <a data-act="authMode" data-arg="signin">Sign in</a></p>'
+      : '<div class="field"><label>Email, phone, or username</label>'
+          +'<div class="idcombo"><input id="au_id" type="text" value="'+esc(V.id||"")+'" placeholder="you@email.com" autocomplete="off">'
+          +(creds.length?'<div class="idmenu">'+creds.map(function(c){ return '<div class="idopt" tabindex="-1" data-act="pickCred" data-arg="'+esc(c.show)+'"><span class="idic">👤</span><span>'+esc(c.show)+'</span></div>'; }).join("")+'</div>':'')
+          +'</div></div>'
+        +'<div class="field"><label>Password</label>'+pwField("au_pw","Your password","doSignIn","current-password")+'</div>'
+        +'<button class="btn" data-act="doSignIn">Sign in</button>'
+        +'<p class="auth-switch">New to Ascend? <a data-act="authMode" data-arg="signup">Create an account</a></p>')
+    +'<p class="auth-note">Your account and progress are securely synced. We never store your password in this app.</p>'
+    +'</div>'+siteFooter()+'</div>';
+}
+function render(){
+  if(!SESSION.uid){ app.innerHTML=viewAuth(); return; }
+  var s=state.screen, html;
+  if(s==="onboarding") html=viewOnboarding();
+  else if(s==="home") html=chrome(viewHome(),"home");
+  else if(s==="session") html=viewSession();
+  else if(s==="summary") html=viewSummary();
+  else if(s==="review") html=chrome(viewReview(),"profile");
+  else if(s==="friends") html=chrome(viewFriends(),"friends");
+  else if(s==="tutor") html=chrome(viewTutor(),"tutor");
+  else if(s==="profile") html=chrome(viewProfile(),"profile");
+  else if(s==="editprofile") html=chrome(viewEditProfile(),"profile");
+  else if(s==="accounts") html=chrome(viewAccounts(),"profile");
+  else if(s==="friendprofile") html=chrome(viewFriendProfile(),"friends");
+  else if(s==="learn") html=chrome(viewLearn(),"learn");
+  else if(s==="progress") html=chrome(viewProgress(),"progress");
+  else if(s==="lesson") html=chrome(viewLesson(),"learn");
+  else if(s==="generate") html=chrome(viewGenerator(),"generate");
+  else if(s==="test") html=viewTest();
+  else if(s==="testresults") html=viewTestResults();
+  else html=chrome(viewHome(),"home");
+  app.innerHTML=html;
+  // post-render
+  if(s==="home"){ var _cf=climbFrac(); animateClimb(prevFrac===null?_cf:prevFrac,_cf); prevFrac=_cf; }
+  if(s==="tutor"){ var c=document.getElementById("chat"); if(c)c.scrollTop=c.scrollHeight; var ti=document.getElementById("tutorInput"); if(ti)ti.focus(); }
+  if(s==="session" && state.session && state.session.timed && !state.session.answered) startTimer();
+  if(s==="session" && !state.session.answered){ var g=document.getElementById("gridin"); if(g)g.focus(); }
+  if(s==="test" && state.test && state.test.phase==="question"){ startTestTimer(); var tg=document.getElementById("tgrid"); if(tg)tg.focus(); }
+}
+
+/* ---------- PWA: install prompt + service worker ---------- */
+var deferredPrompt=null;
+window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt=e; });
+if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
+  window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+}
+
+/* ---------- Boot ---------- */
+function applyChrome(){
+  app.classList.toggle("noanim", !!(state.settings&&state.settings.reducedMotion));
+  document.body.classList.remove("light");   // dark is the only theme
+}
+function bootUser(){
+  var loaded=load();
+  if(loaded){ state=loaded; if(!state.mastery||!Object.keys(state.mastery).length)initMastery(state);
+    if(state.profile){ if(state.profile.avatarBg==null)state.profile.avatarBg=0; if(!state.profile.climber)state.profile.climber="🧗"; }
+    if(!state.genSetup)state.genSetup={sec:"math",skill:"lin-eq",count:10};
+    if(!state.mastered)state.mastered={};
+    if(!state.masteryRebased){ for(var mk in SKILLS){ state.mastery[mk]=(state.mastered&&state.mastered[mk])?100:0; } state.base0=0; state.masteryRebased=true; }
+    if(!state.friendsSeedCleared){ state.friends=(state.friends||[]).filter(function(f){ return ["summit_sam","ava_climbs","maxpeak"].indexOf(f.u)<0; }); state.friendsSeedCleared=true; } }
+  else { state=defaultState(); var acct=curAcct(); if(acct){ if(acct.username)state.profile.username=acct.username; if(acct.name)state.profile.name=acct.name; } }
+  applyChrome(); render();
+}
+if(cloudReady()){
+  /* A confirmation link returns a new session in the URL. Listen for that
+     event as well as checking storage, so first-time users arrive signed in. */
+  supabaseClient.auth.onAuthStateChange(function(event, session){
+    if(session && session.user && SESSION.uid!==session.user.id) startCloudSession(session.user);
+  });
+  supabaseClient.auth.getSession().then(function(r){
+    if(r.data && r.data.session) startCloudSession(r.data.session.user);
+    else { state=defaultState(); render(); }
+  });
+} else { state=defaultState(); render(); }
+
+})();
+</script>
+</body>
+</html>
