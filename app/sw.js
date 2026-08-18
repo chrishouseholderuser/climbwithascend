@@ -1,5 +1,5 @@
 /* Ascend service worker — offline app shell caching. Bump CACHE to force an update. */
-var CACHE = "ascend-v4";
+var CACHE = "ascend-v5";
 var ASSETS = ["./", "./index.html", "./data.js", "./generators.js", "./manifest.webmanifest",
               "./privacy.html", "./terms.html", "./pledge.html",
               "./icon-192.png", "./icon-512.png", "./icon-maskable.png"];
