@@ -358,6 +358,7 @@
   .lesson-ul{margin:6px 0 4px;padding-left:20px;color:#cfd6ff;line-height:1.55}
   .lesson-ul li{margin:6px 0}
 
+  .guest-banner{background:linear-gradient(180deg,#231a48,#1b2247);border-color:var(--accent)}
   .age-gate{margin:4px 0 14px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:var(--bg2);text-align:left}
   .age-gate p{font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.45}
   .age-check{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--text);font-weight:700;cursor:pointer;line-height:1.4}
@@ -465,7 +466,7 @@ function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } 
 /* ---------- Accounts / auth ----------
    Local layer for now: accounts live on this device. Structured to swap for real
    Supabase Auth (email/phone + password) and Google OAuth once Ascend is hosted. */
-var SESSION={uid:null}, authMode="signin", authErr="", authVals={};
+var SESSION={uid:null}, authMode="guest", authErr="", authVals={};
 function acctsAll(){ try{ return JSON.parse(lsGet("ascend_accounts")||"{}"); }catch(e){ return {}; } }
 function acctsSave(a){ lsSet("ascend_accounts", JSON.stringify(a)); }
 function normId(s){ return (s||"").trim().toLowerCase(); }
@@ -533,7 +534,11 @@ function curKey(){ return SESSION.uid ? ("ascend_u_"+SESSION.uid) : KEY_LEGACY; 
 function save(){ lsSet(curKey(), JSON.stringify(state)); }
 function load(){
   var raw=lsGet(curKey());
-  if(!raw && SESSION.uid){ var legacy=lsGet(KEY_LEGACY); if(legacy && !lsGet("ascend_legacy_claimed")){ lsSet("ascend_legacy_claimed","1"); raw=legacy; } }
+  if(!raw && SESSION.uid && SESSION.uid!=="guest"){
+    var guestRaw=lsGet("ascend_u_guest");
+    if(guestRaw && !lsGet("ascend_guest_claimed")){ lsSet("ascend_guest_claimed","1"); raw=guestRaw; }
+    else { var legacy=lsGet(KEY_LEGACY); if(legacy && !lsGet("ascend_legacy_claimed")){ lsSet("ascend_legacy_claimed","1"); raw=legacy; } }
+  }
   if(raw){ try{ return JSON.parse(raw); }catch(e){} }
   return null;
 }
@@ -548,10 +553,11 @@ if(CLOUD.supabaseUrl && CLOUD.supabaseAnonKey && window.supabase){
     auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
   });
 }
+function isGuest(){ return !SESSION.uid || SESSION.uid==="guest"; }
 function cloudReady(){ return !!supabaseClient; }
 function cloudError(){ return "This deployment is not configured yet. Add its Supabase URL and publishable key to config.js."; }
 function saveCloud(){
-  if(!cloudReady() || !SESSION.uid || !state) return;
+  if(!cloudReady() || !SESSION.uid || isGuest() || !state) return;
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     supabaseClient.from("student_progress").upsert({user_id:SESSION.uid, state:state, updated_at:new Date().toISOString()}).then(function(r){
@@ -572,6 +578,28 @@ function loadCloudProgress(){
 function startCloudSession(user){
   SESSION.uid=user.id; lsSet("ascend_session",JSON.stringify({uid:user.id}));
   bootUser(); loadCloudProgress();
+}
+function startGuest(){
+  var ageEl=document.getElementById("au_age");
+  if(!(ageEl&&ageEl.checked) && !lsGet("ascend_age_ok")){
+    authErr="Please confirm you are 13 or older to start."; render(); return;
+  }
+  if(ageEl&&ageEl.checked) lsSet("ascend_age_ok","1");
+  setSession("guest");
+  var loaded=load();
+  if(loaded){
+    state=loaded;
+    if(state.screen==="onboarding") state.screen="home";
+    if(!state.mastery||!Object.keys(state.mastery).length) initMastery(state);
+  } else {
+    state=defaultState();
+    state.screen="home";
+    state.profile.name="Climber";
+    state.profile.username="guest";
+    initMastery(state);
+  }
+  applyChrome(); save(); render();
+  toast("⛰️","You're in","No account needed. Save later if you want this climb on other devices.");
 }
 
 /* ---------- Helpers ---------- */
@@ -822,11 +850,13 @@ function viewHome(){
     +'<div class="card soft"><div class="between"><div><b>Level '+L+'</b> · <span class="muted">'+esc(levelTitle(L))+'</span></div>'
       +'<div class="mono tiny muted">'+xpInto+' / '+xpSpan+' XP</div></div>'
       +'<div class="bar xp" style="margin-top:9px"><i style="width:'+clamp(xpInto/xpSpan*100,3,100)+'%"></i></div></div>'
-    +'<button class="btn" data-act="go" data-arg="learn">📚 Learn &amp; practice</button>'
+    +(isGuest()?'<div class="card guest-banner"><div class="between" style="align-items:flex-start;gap:12px"><div><b>Climb now, save later</b><div class="muted tiny" style="margin-top:4px">Your progress stays on this device. Create a free account when you want it to follow you.</div></div><button class="btn small" data-act="showSave" style="width:auto;flex-shrink:0">Save climb</button></div></div>':'')
+    +'<button class="btn" data-act="quickClimb">🔥 Quick climb · 5 questions</button>'
+    +'<button class="btn ghost" data-act="go" data-arg="learn">📚 Learn &amp; practice</button>'
     +'<div class="card" data-act="startFullTest" style="cursor:pointer;background:linear-gradient(120deg,#231a48,#3a2560);border-color:var(--accent)"><div class="between"><div class="row"><div style="font-size:24px">🧭</div><div><b>Full-Length Adaptive Test</b><div class="muted tiny">98 questions · 2 hr 14 min · unofficial practice total</div></div></div><span style="color:var(--sun1);font-size:20px">›</span></div></div>'
     +(state.missed.length?'<button class="btn ghost small" data-act="go" data-arg="review">📓 Review missed questions ('+state.missed.length+')</button>':'')
     +aboutAscend()
-    +resourcesCard(false)
+    +'<p class="tiny muted" style="text-align:center">Unofficial practice. Official tests live in <a href="https://satsuite.collegeboard.org/practice/practice-tests/bluebook" target="_blank" rel="noopener">Bluebook™</a>.</p>'
     +'</div>';
 }
 function aboutAscend(){   // front-page "About us" — what Ascend is + gamified highlights
@@ -1620,6 +1650,8 @@ function viewLesson(){   // combined module page: lesson + practice entry
 var ACTIONS={
   go:function(scr){ if(scr==="home")initMastery(state); state.screen=scr; save(); render(); },
   authMode:function(m){ authMode=m; authErr=""; authVals={}; render(); },
+  startGuest:function(){ startGuest(); },
+  showSave:function(){ clearSession(); authMode="signup"; authErr=""; authVals={age:!!lsGet("ascend_age_ok")}; render(); },
   togglePw:function(id,_,btn){ var el=document.getElementById(id); if(!el)return; if(el.type!=="text"){ el.type="text"; if(btn)btn.textContent="Hide"; } else { el.type="password"; if(btn)btn.textContent="Show"; } },
   doSignIn:function(){ authVals={id:val("au_id")}; if(!cloudReady()){ authErr=cloudError(); render(); return; }
     supabaseClient.auth.signInWithPassword({email:(val("au_id")||"").trim(),password:val("au_pw")||""}).then(function(r){
@@ -1646,7 +1678,11 @@ var ACTIONS={
     if(!cloudReady()){ authErr=cloudError(); render(); return; }
     supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}}).then(function(r){ if(r.error){ authErr=r.error.message; render(); } }); },
   signOut:function(){ if(!confirm("Log out of Ascend? Your progress will remain securely saved."))return;
-    if(cloudReady()) supabaseClient.auth.signOut(); clearSession(); state=defaultState(); render(); },
+    if(cloudReady() && !isGuest()) supabaseClient.auth.signOut(); clearSession(); authMode="guest"; state=defaultState(); render(); },
+  quickClimb:function(){
+    var k=weakestSkill()||"lin-eq";
+    startSession({mode:"skill",skill:k,size:5});
+  },
   openAccounts:function(){ state.screen="accounts"; save(); render(); },
   switchAccount:function(uid){ if(!uid||uid===SESSION.uid)return; setSession(uid); bootUser(); var ac=curAcct(); toast("🔄","Switched account",ac?("Now signed in as @"+ac.username):""); },
   addAccount:function(){ clearSession(); authMode="signup"; authErr=""; authVals={}; render(); },
@@ -1748,21 +1784,36 @@ function pwField(id, ph, enter, ac, preset){
     +'<button type="button" class="pw-toggle" data-act="togglePw" data-arg="'+id+'">Show</button></div>';
 }
 function viewAuth(){
-  var signup=authMode==="signup", V=authVals||{}, creds=[];
+  var signup=authMode==="signup", signin=authMode==="signin", V=authVals||{}, creds=[];
+  var ageOn=!!(V.age||lsGet("ascend_age_ok"));
+  var ageBox='<div class="age-gate"><p>Ascend is for students 13 and older.</p>'
+    +'<label class="age-check"><input id="au_age" type="checkbox"'+(ageOn?" checked":"")+'> I confirm I am 13 or older.</label></div>';
+  if(!signup && !signin){
+    return '<div class="auth-wrap"><div class="auth-card">'
+      +'<div class="auth-logo">🏔️</div>'
+      +'<h1 class="auth-title">Ascend</h1>'
+      +'<p class="auth-sub">Unofficial practice. One tap to start climbing.</p>'
+      +(authErr?'<div class="auth-err">'+esc(authErr)+'</div>':'')
+      +ageBox
+      +'<button class="btn" data-act="startGuest">Start climbing</button>'
+      +'<p class="auth-switch" style="margin-top:16px"><a data-act="authMode" data-arg="signin">I already have an account</a> · <a data-act="authMode" data-arg="signup">Save my climb</a></p>'
+      +'<p class="auth-note">No email needed to try it. Official tests still live in Bluebook™.</p>'
+      +'</div>'+siteFooter()+'</div>';
+  }
   return '<div class="auth-wrap"><div class="auth-card">'
     +'<div class="auth-logo">🏔️</div>'
     +'<h1 class="auth-title">Ascend</h1>'
-    +'<p class="auth-sub">'+(signup?"Create your account and start your climb.":"Welcome back — sign in to keep climbing.")+'</p>'
+    +'<p class="auth-sub">'+(signup?"Save this climb so it follows you.":"Welcome back — sign in to keep climbing.")+'</p>'
     +(authErr?'<div class="auth-err">'+esc(authErr)+'</div>':'')
+    +'<p class="auth-switch" style="margin-bottom:14px"><a data-act="startGuest">← Keep going as a guest</a></p>'
     +'<button class="gbtn" data-act="doGoogle"><span class="gicon">G</span> Continue with Google</button>'
     +'<div class="auth-or"><span>or</span></div>'
     +(signup
       ? '<div class="field"><label>Username</label><input id="au_user" type="text" value="'+esc(V.user||"")+'" placeholder="e.g. trailrunner22" autocomplete="username"></div>'
-        +'<div class="field"><label>Email or phone number</label><input id="au_email" type="text" value="'+esc(V.email||"")+'" placeholder="you@email.com  or  (555) 123-4567" autocomplete="email"></div>'
+        +'<div class="field"><label>Email</label><input id="au_email" type="text" value="'+esc(V.email||"")+'" placeholder="you@email.com" autocomplete="email"></div>'
         +'<div class="field"><label>Password</label>'+pwField("au_pw","At least 6 characters","doSignUp","new-password")+'</div>'
         +'<div class="field"><label>Confirm password</label>'+pwField("au_pw2","Re-enter your password","doSignUp","new-password")+'</div>'
-        +'<div class="age-gate"><p>Ascend is for students 13 and older.</p>'
-        +'<label class="age-check"><input id="au_age" type="checkbox"'+(V.age?" checked":"")+'> I confirm I am 13 or older.</label></div>'
+        +ageBox
         +'<button class="btn" data-act="doSignUp">Create account</button>'
         +'<p class="auth-switch">Already have an account? <a data-act="authMode" data-arg="signin">Sign in</a></p>'
       : '<div class="field"><label>Email, phone, or username</label>'
@@ -1772,7 +1823,7 @@ function viewAuth(){
         +'<div class="field"><label>Password</label>'+pwField("au_pw","Your password","doSignIn","current-password")+'</div>'
         +'<button class="btn" data-act="doSignIn">Sign in</button>'
         +'<p class="auth-switch">New to Ascend? <a data-act="authMode" data-arg="signup">Create an account</a></p>')
-    +'<p class="auth-note">Your account and progress are securely synced. We never store your password in this app.</p>'
+    +'<p class="auth-note">Accounts sync progress across devices. We never store your password in this app.</p>'
     +'</div>'+siteFooter()+'</div>';
 }
 function render(){
@@ -1824,8 +1875,9 @@ function bootUser(){
     if(!state.genSetup)state.genSetup={sec:"math",skill:"lin-eq",count:10};
     if(!state.mastered)state.mastered={};
     if(!state.masteryRebased){ for(var mk in SKILLS){ state.mastery[mk]=(state.mastered&&state.mastered[mk])?100:0; } state.base0=0; state.masteryRebased=true; }
-    if(!state.friendsSeedCleared){ state.friends=(state.friends||[]).filter(function(f){ return ["summit_sam","ava_climbs","maxpeak"].indexOf(f.u)<0; }); state.friendsSeedCleared=true; } }
-  else { state=defaultState(); var acct=curAcct(); if(acct){ if(acct.username)state.profile.username=acct.username; if(acct.name)state.profile.name=acct.name; } }
+    if(!state.friendsSeedCleared){ state.friends=(state.friends||[]).filter(function(f){ return ["summit_sam","ava_climbs","maxpeak"].indexOf(f.u)<0; }); state.friendsSeedCleared=true; }
+    if(isGuest() && state.screen==="onboarding") state.screen="home"; }
+  else { state=defaultState(); state.screen="home"; var acct=curAcct(); if(acct){ if(acct.username)state.profile.username=acct.username; if(acct.name)state.profile.name=acct.name; } initMastery(state); }
   applyChrome(); render();
 }
 if(cloudReady()){
@@ -1836,9 +1888,14 @@ if(cloudReady()){
   });
   supabaseClient.auth.getSession().then(function(r){
     if(r.data && r.data.session) startCloudSession(r.data.session.user);
-    else { state=defaultState(); render(); }
+    else resumeLocalOrAuth();
   });
-} else { state=defaultState(); render(); }
+} else { resumeLocalOrAuth(); }
+function resumeLocalOrAuth(){
+  var prev=currentUid();
+  if(prev==="guest"){ SESSION.uid="guest"; bootUser(); if(state && state.screen==="onboarding"){ state.screen="home"; save(); render(); } }
+  else { state=defaultState(); render(); }
+}
 
 })();
 </script>
