@@ -580,11 +580,6 @@ function startCloudSession(user){
   bootUser(); loadCloudProgress();
 }
 function startGuest(){
-  var ageEl=document.getElementById("au_age");
-  if(!(ageEl&&ageEl.checked) && !lsGet("ascend_age_ok")){
-    authErr="Please confirm you are 13 or older to start."; render(); return;
-  }
-  if(ageEl&&ageEl.checked) lsSet("ascend_age_ok","1");
   setSession("guest");
   var loaded=load();
   if(loaded){
@@ -1651,7 +1646,7 @@ var ACTIONS={
   go:function(scr){ if(scr==="home")initMastery(state); state.screen=scr; save(); render(); },
   authMode:function(m){ authMode=m; authErr=""; authVals={}; render(); },
   startGuest:function(){ startGuest(); },
-  showSave:function(){ clearSession(); authMode="signup"; authErr=""; authVals={age:!!lsGet("ascend_age_ok")}; render(); },
+  showSave:function(){ clearSession(); authMode="signup"; authErr=""; authVals={}; render(); },
   togglePw:function(id,_,btn){ var el=document.getElementById(id); if(!el)return; if(el.type!=="text"){ el.type="text"; if(btn)btn.textContent="Hide"; } else { el.type="password"; if(btn)btn.textContent="Show"; } },
   doSignIn:function(){ authVals={id:val("au_id")}; if(!cloudReady()){ authErr=cloudError(); render(); return; }
     supabaseClient.auth.signInWithPassword({email:(val("au_id")||"").trim(),password:val("au_pw")||""}).then(function(r){
@@ -1785,16 +1780,14 @@ function pwField(id, ph, enter, ac, preset){
 }
 function viewAuth(){
   var signup=authMode==="signup", signin=authMode==="signin", V=authVals||{}, creds=[];
-  var ageOn=!!(V.age||lsGet("ascend_age_ok"));
   var ageBox='<div class="age-gate"><p>Ascend is for students 13 and older.</p>'
-    +'<label class="age-check"><input id="au_age" type="checkbox"'+(ageOn?" checked":"")+'> I confirm I am 13 or older.</label></div>';
+    +'<label class="age-check"><input id="au_age" type="checkbox"'+(V.age?" checked":"")+'> I confirm I am 13 or older.</label></div>';
   if(!signup && !signin){
     return '<div class="auth-wrap"><div class="auth-card">'
       +'<div class="auth-logo">🏔️</div>'
       +'<h1 class="auth-title">Ascend</h1>'
       +'<p class="auth-sub">Unofficial practice. One tap to start climbing.</p>'
       +(authErr?'<div class="auth-err">'+esc(authErr)+'</div>':'')
-      +ageBox
       +'<button class="btn" data-act="startGuest">Start climbing</button>'
       +'<p class="auth-switch" style="margin-top:16px"><a data-act="authMode" data-arg="signin">I already have an account</a> · <a data-act="authMode" data-arg="signup">Save my climb</a></p>'
       +'<p class="auth-note">No email needed to try it. Official tests still live in Bluebook™.</p>'
