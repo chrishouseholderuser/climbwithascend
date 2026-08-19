@@ -4,6 +4,8 @@ Free unofficial practice for the Digital SAT® exam. Climb 15 minutes a day.
 
 Live site: https://chrishouseholderuser.github.io/climbwithascend/
 
+MIT licensed. Free unofficial practice. Built by a student. [Source on GitHub](https://github.com/chrishouseholderuser/climbwithascend).
+
 Ascend turns practice into a climb. Every skill you master lifts you toward your summit. Climb progress is unofficial practice — not an official SAT® exam score. Use [Bluebook™](https://satsuite.collegeboard.org/practice/practice-tests/bluebook) for official practice tests.
 
 This product is called **Ascend**. It is not affiliated with the College Board.
@@ -41,3 +43,7 @@ Edit this repository (`climbwithascend`) when you change the hosted site.
 SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this product/site.
 
 Unofficial items include [OpenSAT](https://github.com/Anas099X/OpenSAT). Not official College Board items.
+
+## License
+
+[MIT](LICENSE). Use it, copy it, fork it. Students never pay.
