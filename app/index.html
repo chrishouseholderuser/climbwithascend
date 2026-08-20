@@ -555,6 +555,33 @@ if(CLOUD.supabaseUrl && CLOUD.supabaseAnonKey && window.supabase){
 }
 function isGuest(){ return !SESSION.uid || SESSION.uid==="guest"; }
 function cloudReady(){ return !!supabaseClient; }
+
+function newAnonId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+    var r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+function anonId(){
+  var id=lsGet("ascend_anon");
+  if(!id){ id=newAnonId(); lsSet("ascend_anon", id); }
+  return id;
+}
+function recordUsage(kind){
+  if(!cloudReady()) return;
+  try{
+    var gap = kind==="start" ? 86400000 : 3600000;
+    var key="ascend_usage_"+kind;
+    var now=Date.now();
+    var last=parseInt(lsGet(key)||"0",10);
+    if(now-last<gap) return;
+    lsSet(key, String(now));
+    supabaseClient.rpc("record_usage", {p_anon: anonId(), p_kind: kind}).then(function(r){
+      if(r.error) console.warn("Usage count skipped", r.error.message);
+    });
+  }catch(e){}
+}
 function cloudError(){ return "This deployment is not configured yet. Add its Supabase URL and publishable key to config.js."; }
 function saveCloud(){
   if(!cloudReady() || !SESSION.uid || isGuest() || !state) return;
@@ -895,6 +922,7 @@ function startSession(opts){
   state.session={mode:opts.mode,skill:opts.skill||null,sec:opts.sec||null,queue:queue,i:0,
     answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:!!opts.timed,start:Date.now()};
   state.screen="session"; save(); render();
+  recordUsage("start");
   if(opts.timed) startTimer();
 }
 var timerH=null;
@@ -977,6 +1005,7 @@ function gradeAnswer(given){
   checkAchievements();
   if(correct) xpBurst(gain);
   save(); render();
+  recordUsage("answer");
 }
 function xpBurst(n){ if(state.settings.reducedMotion)return; var b=document.createElement("div"); b.className="burst"; b.textContent="+"+n; document.getElementById("app").appendChild(b); setTimeout(function(){ if(b.parentNode)b.parentNode.removeChild(b); },1000); }
 
@@ -1078,6 +1107,7 @@ function startGenSession(skill,count){
   state.session={mode:"generated",gen:true,genReq:{skill:skill,count:count},skill:skill,sec:SKILLS[skill].sec,
     queue:ids,genMap:map,i:0,answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:false,start:Date.now()};
   state.screen="session"; save(); render();
+  recordUsage("start");
 }
 
 /* ----- Review ----- */
@@ -1408,6 +1438,7 @@ function beginTest(){
     queue:q1, used:q1.slice(), qi:0, selected:null, modCorrect:0, moduleForms:{}, secScores:{},
     answers:[], xp:0, start:Date.now(), modStart:Date.now(), phase:"question" };
   stopTimer(); state.screen="test"; save(); render();
+  recordUsage("start");
 }
 function timeUpModule(){
   var t=state.test; if(!t)return;
@@ -1431,6 +1462,7 @@ function testNext(){
   applyTestScoring(q,correct);
   if(!correct && !state.missed.some(function(m){return m.id===q.id;})) state.missed.unshift({id:q.id,when:Date.now()});
   t.selected=null; t.qi++;
+  recordUsage("answer");
   if(t.qi<t.queue.length){ save(); render(); return; }
   finishModule();
 }
@@ -1730,7 +1762,7 @@ var ACTIONS={
   quitSession:function(){ stopTimer(); state.session=null; state.screen="home"; save(); render(); },
   askTutorQ:function(){ var q=curQ(); state.tutor.push({who:"me",text:"Explain this question"});
     state.tutor.push({who:"bot",text:"On this <b>"+esc(SKILLS[q.skill].name)+"</b> item: "+nl(q.exp)}); state.screen="tutor"; save(); render(); },
-  retryOne:function(id){ var q=Q.find(function(x){return x.id===id;}); if(!q)return; state.session={mode:"retry",queue:[id],i:0,answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:false,start:Date.now()}; state.screen="session"; save(); render(); },
+  retryOne:function(id){ var q=Q.find(function(x){return x.id===id;}); if(!q)return; state.session={mode:"retry",queue:[id],i:0,answered:false,selected:null,correct:0,xp:0,combo:0,results:[],timed:false,start:Date.now()}; state.screen="session"; save(); render(); recordUsage("start"); },
   clearMiss:function(id){ state.missed=state.missed.filter(function(m){return m.id!==id;}); save(); render(); },
   addFriend:function(){ var u=(val("friendInput")||"").trim().replace(/^@/,""); if(!u)return;
     if(u.toLowerCase()===(state.profile.username||"").toLowerCase()){ toast("🙂","That's you!","Add a friend's username."); return; }

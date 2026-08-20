@@ -27,7 +27,7 @@ Ascend is for students 13 and older. Creating an account requires confirming tha
 ## Deploy
 
 1. Create a Supabase project. In **Authentication → Providers**, enable Email and (optionally) Google. Turn on email confirmation and add the production URL under Authentication → URL Configuration.
-2. Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor.
+2. Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL Editor, then [`supabase/usage.sql`](supabase/usage.sql) for anonymous tried / weekly-active counts (no names, no ads).
 3. Set the project URL and **publishable/anon** key in `app/config.js`. Do not use a `service_role` key. The browser key is designed to be public; data protection comes from the RLS policies.
 4. In this repository, set GitHub Pages to **GitHub Actions**. The workflow deploys the `app/` folder. The live URL is `https://chrishouseholderuser.github.io/climbwithascend/`.
 5. Use HTTPS. It is required for PWA installation and protects logins in transit.
