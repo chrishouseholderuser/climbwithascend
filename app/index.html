@@ -56,6 +56,10 @@
   h3{font-size:15px;font-weight:700}
   p{line-height:1.5;color:#cfd6ff}
 
+  .crawl-intro{padding:28px 20px;max-width:480px;margin:0 auto}
+  .crawl-intro h1{margin-bottom:10px}
+  .crawl-intro p{margin:0 0 12px}
+  noscript main{padding:28px 20px;max-width:480px;margin:0 auto}
   /* Topbar */
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
     padding:14px 16px 10px; }
@@ -375,7 +379,22 @@
 </head>
 <body>
 
-<div id="app"></div>
+<div id="app">
+  <section class="crawl-intro">
+    <h1>Ascend</h1>
+    <p>Free unofficial practice for the Digital SAT® exam. I’m Chris, a high schooler from Dallas. I wanted test prep that does not feel like homework, so I made practice into a climb: short sessions, a mountain, a streak. Always free for students. MIT licensed. Anyone can take it and improve it.</p>
+    <p>This is complementary. Take an official Bluebook™ practice test first (same app as test day). Then climb here about 15 minutes a day. Then Bluebook again. Not a College Board partner. Not a replacement for Bluebook, Khan Academy, or Schoolhouse.</p>
+    <p>Try it with one tap. No email required. <a href="pledge.html">Students never pay</a>. <a href="https://github.com/chrishouseholderuser/climbwithascend">Source on GitHub</a>.</p>
+  </section>
+</div>
+<noscript>
+  <main>
+    <h1>Ascend</h1>
+    <p>Free unofficial Digital SAT® practice as a climb. Built by Chris, a high schooler from Dallas. Always free for students. MIT licensed.</p>
+    <p>Bluebook first, then this, then Bluebook again. Unofficial. Not a College Board partner.</p>
+    <p><a href="pledge.html">Students never pay</a> · <a href="https://github.com/chrishouseholderuser/climbwithascend">GitHub</a></p>
+  </main>
+</noscript>
 <div id="toasts"></div>
 
 <script src="data.js"></script>
