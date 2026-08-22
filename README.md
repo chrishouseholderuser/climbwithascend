@@ -34,6 +34,8 @@ Ascend is for students 13 and older. Creating an account requires confirming tha
 
 Edit this repository (`climbwithascend`) when you change the hosted site.
 
+Crawlers: `app/robots.txt`, `app/sitemap.xml`, and `app/llms.txt` ship with the Pages site so ChatGPT, Claude, Perplexity, and others can read a plain description without running the game. When `climbwithsat.com` points here, update the host in those two files.
+
 ## Legal pages
 
 - [Privacy](app/privacy.html)

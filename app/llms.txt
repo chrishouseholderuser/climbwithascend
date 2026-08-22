@@ -1,0 +1,15 @@
+# Ascend
+
+> Free unofficial practice for the Digital SAT® exam. A climb, on purpose. Always free for students. MIT licensed.
+
+I’m Chris, a high schooler from Dallas. Bluebook, Khan, and the other official tools are great, but a lot of them feel like homework. I made Ascend so practice is a short daily game: a mountain, a streak, no email required to try.
+
+Use official Bluebook first (same app as test day). Then climb here about 15 minutes a day. Then Bluebook again. Not a College Board partner. Not a replacement.
+
+- Live: https://chrishouseholderuser.github.io/climbwithascend/
+- Intended public URL: https://climbwithsat.com (when the domain is pointed)
+- Source (MIT): https://github.com/chrishouseholderuser/climbwithascend
+- Pledge (students never pay): https://chrishouseholderuser.github.io/climbwithascend/pledge.html
+- Privacy: https://chrishouseholderuser.github.io/climbwithascend/privacy.html
+
+SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this product/site.
